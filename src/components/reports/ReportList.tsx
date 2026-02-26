@@ -1,0 +1,1 @@
+export { default as ReportListPage } from '@/pages/ReportsPage';
