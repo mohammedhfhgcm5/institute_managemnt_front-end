@@ -1,43 +1,84 @@
-import { apiClient } from '@/api/config';
-import { ENDPOINTS } from '@/api/endpoints';
-import { ApiResponse, PaginatedResponse, PaginationParams } from '@/types/common.types';
+import { apiClient } from "@/api/config";
+import { ENDPOINTS } from "@/api/endpoints";
+import {
+  ApiResponse,
+  PaginatedMeta,
+  PaginatedResponse,
+  PaginationParams,
+} from "@/types/common.types";
 import {
   Notification,
   CreateNotificationData,
   BulkNotificationData,
   UnreadCountResponse,
-} from '@/types/notification.types';
+} from "@/types/notification.types";
+
+const buildDefaultMeta = (itemsCount: number): PaginatedMeta => ({
+  total: itemsCount,
+  page: 1,
+  limit: Math.max(itemsCount, 1),
+  totalPages: 1,
+});
+
+const normalizeNotificationsResponse = (
+  responseData: PaginatedResponse<Notification> | Notification[],
+): PaginatedResponse<Notification> => {
+  if (Array.isArray(responseData)) {
+    return {
+      data: responseData,
+      meta: buildDefaultMeta(responseData.length),
+    };
+  }
+
+  const items = Array.isArray(responseData.data) ? responseData.data : [];
+  const meta = responseData.meta;
+
+  return {
+    data: items,
+    meta: {
+      total: typeof meta?.total === "number" ? meta.total : items.length,
+      page: typeof meta?.page === "number" ? meta.page : 1,
+      limit:
+        typeof meta?.limit === "number"
+          ? meta.limit
+          : Math.max(items.length, 1),
+      totalPages:
+        typeof meta?.totalPages === "number" ? Math.max(meta.totalPages, 1) : 1,
+    },
+  };
+};
 
 export const notificationService = {
   getAll: async (
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Notification>> => {
     const response = await apiClient.get<
-      ApiResponse<PaginatedResponse<Notification>>
+      ApiResponse<PaginatedResponse<Notification> | Notification[]>
     >(ENDPOINTS.NOTIFICATIONS, { params });
-    return response.data.data;
+    return normalizeNotificationsResponse(response.data.data);
   },
 
   getMy: async (
-    params?: PaginationParams
+    params?: PaginationParams,
   ): Promise<PaginatedResponse<Notification>> => {
     const response = await apiClient.get<
-      ApiResponse<PaginatedResponse<Notification>>
+      ApiResponse<PaginatedResponse<Notification> | Notification[]>
     >(ENDPOINTS.MY_NOTIFICATIONS, { params });
-    return response.data.data;
+    return normalizeNotificationsResponse(response.data.data);
   },
 
   getUnreadCount: async (): Promise<number> => {
     const response = await apiClient.get<ApiResponse<UnreadCountResponse>>(
-      ENDPOINTS.UNREAD_COUNT
+      ENDPOINTS.UNREAD_COUNT,
     );
-    return response.data.data.count;
+    const unreadCount = response.data.data;
+    return unreadCount.count ?? unreadCount.unreadCount ?? 0;
   },
 
   create: async (data: CreateNotificationData): Promise<Notification> => {
     const response = await apiClient.post<ApiResponse<Notification>>(
       ENDPOINTS.NOTIFICATIONS,
-      data
+      data,
     );
     return response.data.data;
   },

@@ -3,7 +3,7 @@ import {
   NotificationRelatedType,
   NotificationType,
   UserRole,
-} from './common.types';
+} from "./common.types";
 
 export interface Notification {
   id: number;
@@ -38,5 +38,6 @@ export interface BulkNotificationData {
 }
 
 export interface UnreadCountResponse {
-  count: number;
+  count?: number;
+  unreadCount?: number;
 }

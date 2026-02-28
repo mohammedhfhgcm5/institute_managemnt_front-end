@@ -7,60 +7,13 @@ import { formatDateTime, getStatusLabel } from '@/utils/formatters';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { exportJsonToExcel, exportJsonToPdf } from '@/lib/exportUtils';
 
 interface ReportViewerProps {
   reportId: number;
 }
 
 type ExportFormat = 'excel' | 'pdf';
-type ExcelCellValue = string | number | boolean | null;
-type ExcelRow = Record<string, ExcelCellValue>;
-
-function normalizeCellValue(value: unknown): ExcelCellValue {
-  if (value === null || value === undefined) return null;
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-    return value;
-  }
-  try {
-    return JSON.stringify(value);
-  } catch {
-    return String(value);
-  }
-}
-
-function toExcelRows(data: unknown): ExcelRow[] {
-  if (Array.isArray(data)) {
-    if (data.length === 0) return [];
-
-    const isArrayOfObjects = data.every(
-      (item) => item !== null && typeof item === 'object' && !Array.isArray(item)
-    );
-
-    if (isArrayOfObjects) {
-      return data.map((item) => {
-        const row: ExcelRow = {};
-        Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
-          row[key] = normalizeCellValue(value);
-        });
-        return row;
-      });
-    }
-
-    return data.map((item, index) => ({
-      index: index + 1,
-      value: normalizeCellValue(item),
-    }));
-  }
-
-  if (data !== null && typeof data === 'object') {
-    return Object.entries(data as Record<string, unknown>).map(([field, value]) => ({
-      field,
-      value: normalizeCellValue(value),
-    }));
-  }
-
-  return [{ value: normalizeCellValue(data) }];
-}
 
 function buildFileBaseName(title: string, reportId: number): string {
   const safeTitle = title
@@ -70,46 +23,6 @@ function buildFileBaseName(title: string, reportId: number): string {
     .replace(/[^a-z0-9-_]/g, '')
     .slice(0, 50);
   return `${safeTitle || 'report'}-${reportId}`;
-}
-
-async function exportJsonToExcel(data: unknown, fileBaseName: string) {
-  const XLSX = await import('xlsx');
-  const rows = toExcelRows(data);
-  const sheetData = rows.length > 0 ? rows : [{ value: 'No data available' }];
-  const worksheet = XLSX.utils.json_to_sheet(sheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
-  XLSX.writeFile(workbook, `${fileBaseName}.xlsx`);
-}
-
-async function exportJsonToPdf(title: string, data: unknown, fileBaseName: string) {
-  const { default: jsPDF } = await import('jspdf');
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const margin = 40;
-  const lineHeight = 14;
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-
-  doc.setFontSize(14);
-  doc.text(title, margin, margin);
-  doc.setFontSize(10);
-  doc.text(`Generated: ${new Date().toLocaleString()}`, margin, margin + 18);
-  doc.setFont('courier', 'normal');
-
-  const jsonText = JSON.stringify(data, null, 2) || 'No data available';
-  const lines = doc.splitTextToSize(jsonText, pageWidth - margin * 2);
-  let y = margin + 42;
-
-  lines.forEach((line: string) => {
-    if (y > pageHeight - margin) {
-      doc.addPage();
-      y = margin;
-    }
-    doc.text(line, margin, y);
-    y += lineHeight;
-  });
-
-  doc.save(`${fileBaseName}.pdf`);
 }
 
 export function ReportViewer({ reportId }: ReportViewerProps) {
@@ -139,7 +52,7 @@ export function ReportViewer({ reportId }: ReportViewerProps) {
       } else {
         await exportJsonToPdf(report.title, report.data, fileBaseName);
       }
-      toast.success(`${format.toUpperCase()} downloaded successfully.`);
+      toast.success(`${format.toUpperCase()} downloaded successfully! 🎉`);
     } catch (error) {
       console.error('Local export failed:', error);
       toast.error('Failed to export report file.');
