@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { studentSchema } from '@/utils/validators';
@@ -19,6 +19,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { SearchSelect } from '@/components/ui/searchselect';
 import { useCreateStudent, useUpdateStudent } from '@/hooks/api/useStudents';
 import { useParents } from '@/hooks/api/useParents';
 import { useSections } from '@/hooks/api/useSections';
@@ -37,9 +38,19 @@ interface StudentFormProps {
 export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
   const createStudent = useCreateStudent();
   const updateStudent = useUpdateStudent();
-  const { data: parentsData } = useParents({ limit: 100 });
   const { data: sectionsData } = useSections({ limit: 100 });
   const isEditing = !!student;
+
+  // States for SearchSelect
+  const [parentQuery, setParentQuery] = useState('');
+  const [parentResults, setParentResults] = useState<any[]>([]);
+  const [selectedParent, setSelectedParent] = useState<{ id: number; name: string } | null>(null);
+
+  // Fetch parents based on search query
+  const { data: parentsData } = useParents({ 
+    limit: 100, 
+    search: parentQuery 
+  });
 
   const {
     register,
@@ -60,6 +71,15 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
     },
   });
 
+  // Update parent results when data changes
+  useEffect(() => {
+    if (parentsData?.data && parentQuery.length > 0) {
+      setParentResults(parentsData.data);
+    } else {
+      setParentResults([]);
+    }
+  }, [parentsData, parentQuery]);
+
   useEffect(() => {
     if (student) {
       reset({
@@ -73,6 +93,15 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
         address: student.address || '',
         status: student.status,
       });
+
+      // Set selected parent if exists
+      if (student.parentId && student.parent) {
+        setSelectedParent({
+          id: student.parentId,
+          name: `${student.parent.firstName} ${student.parent.lastName}`
+        });
+        setParentQuery(`${student.parent.firstName} ${student.parent.lastName}`);
+      }
     } else {
       reset({
         firstName: '',
@@ -85,6 +114,8 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
         address: '',
         status: 'active',
       });
+      setSelectedParent(null);
+      setParentQuery('');
     }
   }, [student, reset]);
 
@@ -97,7 +128,6 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
   };
 
   const isPending = createStudent.isPending || updateStudent.isPending;
-  const parents = parentsData?.data || [];
   const sections = sectionsData?.data || [];
 
   return (
@@ -141,22 +171,19 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>ولي الأمر</Label>
-              <Select
-                value={watch('parentId') ? String(watch('parentId')) : undefined}
-                onValueChange={(val) => setValue('parentId', Number(val))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر ولي الأمر" />
-                </SelectTrigger>
-                <SelectContent>
-                  {parents.map((parent) => (
-                    <SelectItem key={parent.id} value={String(parent.id)}>
-                      {parent.firstName} {parent.lastName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchSelect
+                label="ولي الأمر"
+                query={parentQuery}
+                setQuery={setParentQuery}
+                results={parentResults}
+                setResults={setParentResults}
+                selected={selectedParent}
+                setSelected={setSelectedParent}
+                setValue={(id) => setValue('parentId', id)}
+                display={(parent) => `${parent.firstName} ${parent.lastName}`}
+                required={false}
+              />
+              {errors.parentId && <p className="text-sm text-destructive">{errors.parentId.message}</p>}
             </div>
 
             <div className="space-y-2">

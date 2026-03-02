@@ -1,4 +1,5 @@
 import { Gender, StudentStatus } from './common.types';
+import { Parent } from './parent.types';
 
 export interface Student {
   id: number;
@@ -15,6 +16,7 @@ export interface Student {
   status: StudentStatus;
   createdAt: string;
   updatedAt: string;
+  parent:Parent
 }
 
 export interface CreateStudentData {
