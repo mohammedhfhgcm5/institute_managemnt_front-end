@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSchedules, useDeleteSchedule } from "@/hooks/api/useSchedules";
 import { usePermissions } from "@/hooks/usePermissions";
 import { DataTable, Column } from "@/components/common/DataTable";
@@ -8,7 +9,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Schedule } from "@/types/schedule.types";
 import { getStatusColor, getStatusLabel } from "@/utils/formatters";
 import { useDebounce } from "@/hooks/useDebounce";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, LayoutGrid } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScheduleForm } from "./ScheduleForm";
 
@@ -40,6 +41,7 @@ const toTimeLabel = (timeValue: string) => {
 };
 
 export function ScheduleList() {
+  const navigate = useNavigate();
   const permissions = usePermissions();
   const canCreateOrEdit = permissions.canManageAttendance;
   const canDelete = permissions.isAdmin;
@@ -193,17 +195,23 @@ export function ScheduleList() {
         onSearchChange={setSearch}
         searchPlaceholder="Search schedules..."
         actions={
-          canCreateOrEdit ? (
-            <Button
-              onClick={() => {
-                setEditingSchedule(null);
-                setFormOpen(true);
-              }}
-            >
-              <Plus className="ml-2 h-4 w-4" />
-              Add Schedule
+          <div className="flex gap-2">
+            {canCreateOrEdit && (
+              <Button
+                onClick={() => {
+                  setEditingSchedule(null);
+                  setFormOpen(true);
+                }}
+              >
+                <Plus className="ml-2 h-4 w-4" />
+                Add Schedule
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => navigate("/schedules/builder")}>
+              <LayoutGrid className="mr-2 h-4 w-4" />
+              Builder View
             </Button>
-          ) : null
+          </div>
         }
       />
 
@@ -230,6 +238,7 @@ export function ScheduleList() {
         isLoading={deleteSchedule.isPending}
         confirmText="Delete"
       />
+
     </>
   );
 }

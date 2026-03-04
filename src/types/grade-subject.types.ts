@@ -1,3 +1,7 @@
+import { Grade } from "./grade.types";
+import { Subject } from "./subject.types";
+import { Teacher } from "./teacher.types";
+
 export interface GradeSubject {
   id: number;
   gradeId: number;
@@ -5,6 +9,9 @@ export interface GradeSubject {
   teacherId?: number;
   createdAt: string;
   updatedAt: string;
+  grade:Grade,
+  subject:Subject,
+  teacher:Teacher
 }
 
 export interface CreateGradeSubjectData {

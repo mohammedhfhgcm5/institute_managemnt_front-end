@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useCourses, useDeleteCourse } from '@/hooks/api/useCourses';
 import { useGrades } from '@/hooks/api/useGrades';
 import { useTeachers } from '@/hooks/api/useTeachers';
@@ -10,20 +10,13 @@ import {
 import { DataTable, Column } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
+import { SearchSelect } from '@/components/ui/searchselect';
 import { Course } from '@/types/course.types';
 import { GradeSubject } from '@/types/grade-subject.types';
 import { formatDate } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Plus, Edit, Trash2, Link2, Loader2 } from 'lucide-react';
 import { CourseForm } from '@/components/courses/CourseForm';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 type GradeSubjectWithRelations = GradeSubject & {
@@ -39,11 +32,22 @@ export default function CoursesPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-
-  const [selectedGradeId, setSelectedGradeId] = useState('');
-  const [selectedSubjectId, setSelectedSubjectId] = useState('');
-  const [selectedTeacherId, setSelectedTeacherId] = useState('');
   const [deletingGradeSubjectId, setDeletingGradeSubjectId] = useState<number | null>(null);
+
+  // SearchSelect states for Grade
+  const [gradeQuery, setGradeQuery] = useState('');
+  const [gradeResults, setGradeResults] = useState<any[]>([]);
+  const [selectedGrade, setSelectedGrade] = useState<{ id: number; name: string } | null>(null);
+
+  // SearchSelect states for Subject
+  const [subjectQuery, setSubjectQuery] = useState('');
+  const [subjectResults, setSubjectResults] = useState<any[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<{ id: number; name: string } | null>(null);
+
+  // SearchSelect states for Teacher
+  const [teacherQuery, setTeacherQuery] = useState('');
+  const [teacherResults, setTeacherResults] = useState<any[]>([]);
+  const [selectedTeacher, setSelectedTeacher] = useState<{ id: number; name: string } | null>(null);
 
   const { data, isLoading, isError, refetch } = useCourses({
     page,
@@ -58,21 +62,23 @@ export default function CoursesPage() {
     refetch: refetchGradeSubjects,
   } = useGradeSubjects();
   
-  // Fetch data for dropdowns with proper spacing
-  const { data: subjectsForRelations, isLoading: isSubjectsLoading } = useCourses({ 
+  // Fetch data with search queries
+  const { data: subjectsForRelations } = useCourses({ 
     page: 1, 
-    limit: 99, 
-    search: '' 
+    limit: 100, 
+    search: subjectQuery 
   });
-  const { data: gradesForRelations, isLoading: isGradesLoading } = useGrades({ 
+  
+  const { data: gradesForRelations } = useGrades({ 
     page: 1, 
-    limit: 99, 
-    search: '' 
+    limit: 100, 
+    search: gradeQuery 
   });
-  const { data: teachersForRelations, isLoading: isTeachersLoading } = useTeachers({ 
+  
+  const { data: teachersForRelations } = useTeachers({ 
     page: 1, 
-    limit: 99, 
-    search: '' 
+    limit: 100, 
+    search: teacherQuery 
   });
 
   const deleteCourse = useDeleteCourse();
@@ -84,10 +90,30 @@ export default function CoursesPage() {
   const grades = gradesForRelations?.data || [];
   const teachers = teachersForRelations?.data || [];
 
-  // Debug: Log the data to console (remove in production)
-  console.log('Subjects:', subjects);
-  console.log('Grades:', grades);
-  console.log('Teachers:', teachers);
+  // Update results when data changes
+  useEffect(() => {
+    if (grades && gradeQuery.length > 0) {
+      setGradeResults(grades);
+    } else {
+      setGradeResults([]);
+    }
+  }, [grades, gradeQuery]);
+
+  useEffect(() => {
+    if (subjects && subjectQuery.length > 0) {
+      setSubjectResults(subjects);
+    } else {
+      setSubjectResults([]);
+    }
+  }, [subjects, subjectQuery]);
+
+  useEffect(() => {
+    if (teachers && teacherQuery.length > 0) {
+      setTeacherResults(teachers);
+    } else {
+      setTeacherResults([]);
+    }
+  }, [teachers, teacherQuery]);
 
   const subjectNameById = useMemo(
     () => new Map(subjects.map((subject) => [subject.id, subject.name])),
@@ -126,9 +152,9 @@ export default function CoursesPage() {
   };
 
   const handleCreateGradeSubject = () => {
-    const gradeId = Number(selectedGradeId);
-    const subjectId = Number(selectedSubjectId);
-    const teacherId = selectedTeacherId ? Number(selectedTeacherId) : undefined;
+    const gradeId = selectedGrade?.id;
+    const subjectId = selectedSubject?.id;
+    const teacherId = selectedTeacher?.id;
 
     if (!gradeId || !subjectId) {
       toast.error('Please select both grade and subject.');
@@ -147,9 +173,12 @@ export default function CoursesPage() {
       { gradeId, subjectId, teacherId },
       {
         onSuccess: () => {
-          setSelectedGradeId('');
-          setSelectedSubjectId('');
-          setSelectedTeacherId('');
+          setSelectedGrade(null);
+          setGradeQuery('');
+          setSelectedSubject(null);
+          setSubjectQuery('');
+          setSelectedTeacher(null);
+          setTeacherQuery('');
         },
       }
     );
@@ -265,88 +294,56 @@ export default function CoursesPage() {
           Each row links one subject (مواد) to one grade (الصف), with optional teacher.
         </p>
 
-        <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
-          <div className="space-y-2">
-            <Label>Grade (الصف)</Label>
-            <Select 
-              value={selectedGradeId || undefined} 
-              onValueChange={setSelectedGradeId}
-              disabled={isGradesLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isGradesLoading ? "Loading..." : "Select grade"} />
-              </SelectTrigger>
-              <SelectContent>
-                {grades.length === 0 && !isGradesLoading ? (
-                  <div className="p-2 text-sm text-muted-foreground">No grades available</div>
-                ) : (
-                  grades.map((grade) => (
-                    <SelectItem key={grade.id} value={String(grade.id)}>
-                      {grade.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="grid gap-3 md:grid-cols-3 md:items-end">
+          <SearchSelect
+            label="Grade (الصف)"
+            query={gradeQuery}
+            setQuery={setGradeQuery}
+            results={gradeResults}
+            setResults={setGradeResults}
+            selected={selectedGrade}
+            setSelected={setSelectedGrade}
+            setValue={(id) => setSelectedGrade({ id, name: grades.find(g => g.id === id)?.name || '' })}
+            display={(grade) => grade.name}
+            required={true}
+          />
 
-          <div className="space-y-2">
-            <Label>Subject (مواد)</Label>
-            <Select 
-              value={selectedSubjectId || undefined} 
-              onValueChange={setSelectedSubjectId}
-              disabled={isSubjectsLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isSubjectsLoading ? "Loading..." : "Select subject"} />
-              </SelectTrigger>
-              <SelectContent>
-                {subjects.length === 0 && !isSubjectsLoading ? (
-                  <div className="p-2 text-sm text-muted-foreground">No subjects available</div>
-                ) : (
-                  subjects.map((subject) => (
-                    <SelectItem key={subject.id} value={String(subject.id)}>
-                      {subject.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+          <SearchSelect
+            label="Subject (مواد)"
+            query={subjectQuery}
+            setQuery={setSubjectQuery}
+            results={subjectResults}
+            setResults={setSubjectResults}
+            selected={selectedSubject}
+            setSelected={setSelectedSubject}
+            setValue={(id) => setSelectedSubject({ id, name: subjects.find(s => s.id === id)?.name || '' })}
+            display={(subject) => subject.name}
+            required={true}
+          />
 
-          <div className="space-y-2">
-            <Label>Teacher (Optional)</Label>
-            <Select 
-              value={selectedTeacherId || undefined} 
-              onValueChange={setSelectedTeacherId}
-              disabled={isTeachersLoading}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isTeachersLoading ? "Loading..." : "Select teacher (optional)"} />
-              </SelectTrigger>
-              <SelectContent>
-                {teachers.length === 0 && !isTeachersLoading ? (
-                  <div className="p-2 text-sm text-muted-foreground">No teachers available</div>
-                ) : (
-                  teachers.map((teacher) => (
-                    <SelectItem key={teacher.id} value={String(teacher.id)}>
-                      {`${teacher.firstName} ${teacher.lastName}`.trim()}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleCreateGradeSubject}
-            disabled={!selectedGradeId || !selectedSubjectId || createGradeSubject.isPending}
-          >
-            {createGradeSubject.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Add Link
-          </Button>
+          <SearchSelect
+            label="Teacher (Optional)"
+            query={teacherQuery}
+            setQuery={setTeacherQuery}
+            results={teacherResults}
+            setResults={setTeacherResults}
+            selected={selectedTeacher}
+            setSelected={setSelectedTeacher}
+            setValue={(id) => setSelectedTeacher({ id, name: `${teachers.find(t => t.id === id)?.firstName || ''} ${teachers.find(t => t.id === id)?.lastName || ''}`.trim() })}
+            display={(teacher) => `${teacher.firstName} ${teacher.lastName}`.trim()}
+            required={false}
+          />
         </div>
+
+        <Button
+          type="button"
+          onClick={handleCreateGradeSubject}
+          disabled={!selectedGrade || !selectedSubject || createGradeSubject.isPending}
+          className="w-full md:w-auto"
+        >
+          {createGradeSubject.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Add Link
+        </Button>
 
         <DataTable
           columns={gradeSubjectColumns}

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { assessmentService } from '@/services/assessment.service';
 import { PaginationParams } from '@/types/common.types';
 import {
+  BulkCreateAssessmentData,
   CreateAssessmentData,
   UpdateAssessmentData,
 } from '@/types/assessment.types';
@@ -47,6 +48,33 @@ export const useCreateAssessment = () => {
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
       toast.error(error.response?.data?.message || 'حدث خطأ');
+    },
+  });
+};
+
+export const useBulkCreateAssessments = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: BulkCreateAssessmentData) =>
+      assessmentService.bulkCreate(data),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: assessmentKeys.all });
+      if (result.failureCount === 0) {
+        toast.success('All assessments were created successfully');
+        return;
+      }
+
+      if (result.successCount > 0) {
+        toast.warning(
+          `${result.successCount} assessments created, ${result.failureCount} failed`
+        );
+        return;
+      }
+
+      toast.error('Failed to create assessments');
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      toast.error(error.response?.data?.message || 'Something went wrong');
     },
   });
 };

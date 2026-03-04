@@ -19,6 +19,13 @@ export const studentService = {
     return response.data.data;
   },
 
+  getBySection: async (sectionId: number): Promise<Student[]> => {
+    const response = await apiClient.get<ApiResponse<Student[]>>(
+      ENDPOINTS.STUDENTS_BY_SECTION(sectionId)
+    );
+    return response.data.data;
+  },
+
   create: async (data: CreateStudentData): Promise<Student> => {
     const response = await apiClient.post<ApiResponse<Student>>(
       ENDPOINTS.STUDENTS,

@@ -10,6 +10,7 @@ export const studentKeys = {
   list: (params?: PaginationParams) => [...studentKeys.lists(), params] as const,
   details: () => [...studentKeys.all, 'detail'] as const,
   detail: (id: number) => [...studentKeys.details(), id] as const,
+  bySection: (sectionId: number) => [...studentKeys.all, 'section', sectionId] as const,
 };
 
 export const useStudents = (params?: PaginationParams) => {
@@ -24,6 +25,14 @@ export const useStudent = (id: number) => {
     queryKey: studentKeys.detail(id),
     queryFn: () => studentService.getById(id),
     enabled: !!id,
+  });
+};
+
+export const useStudentsBySection = (sectionId: number) => {
+  return useQuery({
+    queryKey: studentKeys.bySection(sectionId),
+    queryFn: () => studentService.getBySection(sectionId),
+    enabled: !!sectionId,
   });
 };
 

@@ -1,20 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { attendanceService } from '@/services/attendance.service';
 import { PaginationParams } from '@/types/common.types';
-import { CreateAttendanceData, UpdateAttendanceData } from '@/types/attendance.types';
+import {
+  AttendanceFilterParams,
+  BulkAttendanceData,
+  CreateAttendanceData,
+  UpdateAttendanceData,
+} from '@/types/attendance.types';
 import { toast } from 'sonner';
+
+type AttendanceListParams = PaginationParams & AttendanceFilterParams;
 
 export const attendanceKeys = {
   all: ['attendance'] as const,
   lists: () => [...attendanceKeys.all, 'list'] as const,
-  list: (params?: PaginationParams) => [...attendanceKeys.lists(), params] as const,
+  list: (params?: AttendanceListParams) => [...attendanceKeys.lists(), params] as const,
   details: () => [...attendanceKeys.all, 'detail'] as const,
   detail: (id: number) => [...attendanceKeys.details(), id] as const,
   stats: (params?: Record<string, string>) =>
     [...attendanceKeys.all, 'stats', params] as const,
 };
 
-export const useAttendanceList = (params?: PaginationParams) => {
+export const useAttendanceList = (params?: AttendanceListParams) => {
   return useQuery({
     queryKey: attendanceKeys.list(params),
     queryFn: () => attendanceService.getAll(params),
@@ -41,6 +48,21 @@ export const useCreateAttendance = () => {
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
       toast.error(error.response?.data?.message || 'حدث خطأ');
+    },
+  });
+};
+
+export const useBulkCreateAttendance = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: BulkAttendanceData) => attendanceService.bulkCreate(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: attendanceKeys.stats() });
+      toast.success('Bulk attendance has been saved');
+    },
+    onError: (error: { response?: { data?: { message?: string } } }) => {
+      toast.error(error.response?.data?.message || 'Something went wrong');
     },
   });
 };

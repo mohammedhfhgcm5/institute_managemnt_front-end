@@ -13,6 +13,7 @@ const ParentsPage = lazy(() => import("@/pages/ParentsPage"));
 const CoursesPage = lazy(() => import("@/pages/CoursesPage"));
 const SectionsPage = lazy(() => import("@/pages/SectionsPage"));
 const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
+const ScheduleBuilderPage = lazy(() => import("@/pages/ScheduleBuilderPage"));
 const AssessmentPage = lazy(() => import("@/pages/AssessmentPage"));
 const AttendancePage = lazy(() => import("@/pages/AttendancePage"));
 const GradesPage = lazy(() => import("@/pages/GradesPage"));
@@ -49,6 +50,7 @@ export default function AppRoutes() {
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/sections" element={<SectionsPage />} />
         <Route path="/schedules" element={<SchedulePage />} />
+        <Route path="/schedules/builder" element={<ScheduleBuilderPage />} />
         <Route path="/assessments" element={<AssessmentPage />} />
         <Route path="/attendance" element={<AttendancePage />} />
         <Route path="/grades" element={<GradesPage />} />

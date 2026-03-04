@@ -8,6 +8,8 @@ import {
 } from "@/types/common.types";
 import {
   Attendance,
+  BulkAttendanceData,
+  BulkAttendanceResult,
   CreateAttendanceData,
   UpdateAttendanceData,
   AttendanceStats,
@@ -149,6 +151,29 @@ export const attendanceService = {
       data,
     );
     return response.data.data;
+  },
+
+  bulkCreate: async (
+    data: BulkAttendanceData,
+  ): Promise<BulkAttendanceResult> => {
+    const response = await apiClient.post<
+      ApiResponse<BulkAttendanceResult> | BulkAttendanceResult
+    >(
+      ENDPOINTS.ATTENDANCE_BULK,
+      data,
+    );
+    const payload = response.data;
+
+    if (
+      payload &&
+      typeof payload === "object" &&
+      "success" in payload &&
+      "data" in payload
+    ) {
+      return payload.data;
+    }
+
+    return payload as BulkAttendanceResult;
   },
 
   update: async (

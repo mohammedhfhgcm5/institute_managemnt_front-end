@@ -1,5 +1,28 @@
 import { AttendanceStatus } from './common.types';
 
+export interface AttendanceStudentSummary {
+  id: number;
+  firstName: string;
+  lastName: string;
+}
+
+export interface AttendanceScheduleSummary {
+  id: number;
+  sectionId?: number;
+  gradeSubjectId?: number;
+  section?: {
+    id: number;
+    name: string;
+  };
+  gradeSubject?: {
+    id: number;
+    subject?: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
 export interface Attendance {
   id: number;
   studentId: number;
@@ -12,6 +35,8 @@ export interface Attendance {
   notificationSentAt?: string;
   createdAt: string;
   updatedAt: string;
+  student?: AttendanceStudentSummary;
+  schedule?: AttendanceScheduleSummary;
 }
 
 export interface CreateAttendanceData {
@@ -36,6 +61,11 @@ export interface BulkAttendanceData {
   scheduleId: number;
   date: string;
   students: BulkAttendanceItemData[];
+}
+
+export interface BulkAttendanceResult {
+  message: string;
+  data: Attendance[];
 }
 
 export interface AttendanceFilterParams {

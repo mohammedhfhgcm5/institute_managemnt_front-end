@@ -22,6 +22,22 @@ export function SearchSelect({
   display: (item: any) => string;
   required?: boolean;
 }) {
+  const getItemLabel = (item: any): string => {
+    const directName =
+      typeof item?.name === "string"
+        ? item.name
+        : typeof item?.fullName === "string"
+          ? item.fullName
+          : [item?.firstName, item?.lastName]
+              .filter((part) => typeof part === "string" && part.trim().length > 0)
+              .join(" ");
+
+    if (directName && directName.trim().length > 0) return directName;
+
+    const fallback = display(item);
+    return typeof fallback === "string" ? fallback : "";
+  };
+
   return (
     <div className="relative">
       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -30,7 +46,7 @@ export function SearchSelect({
 
       <input
         type="text"
-        value={query}
+        value={query ?? ""}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={`Search ${label}...`}
         className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -42,8 +58,9 @@ export function SearchSelect({
             <li
               key={r.id}
               onClick={() => {
-                setSelected({ id: r.id, name: r.name || r.fullName });
-                setQuery(r.name || r.fullName);
+                const itemLabel = getItemLabel(r);
+                setSelected({ id: r.id, name: itemLabel });
+                setQuery(itemLabel);
                 setResults([]);
                 setValue(r.id);
               }}
