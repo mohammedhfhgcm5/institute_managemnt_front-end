@@ -10,28 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSections } from "@/hooks/api/useSections";
+import { useGrades } from "@/hooks/api/useGrades";
+import { useSectionsByGrade } from "@/hooks/api/useSections";
+import { Grade } from "@/types/grade.types";
 import { Section } from "@/types/section.types";
 
 export default function ScheduleBuilderPage() {
   const navigate = useNavigate();
+  const [selectedGradeId, setSelectedGradeId] = useState<number>(0);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [selectedSectionName, setSelectedSectionName] = useState<string>("");
 
-  const { data: sectionsData, isLoading } = useSections();
+  const { data: gradesData, isLoading: isGradesLoading } = useGrades({
+    page: 1,
+    limit: 100,
+  });
+  const { data: sectionsData, isLoading: isSectionsLoading } =
+    useSectionsByGrade(selectedGradeId);
 
-  const sections = useMemo(() => {
-    if (!sectionsData) return [];
-    if (Array.isArray(sectionsData)) return sectionsData as Section[];
-    if (
-      typeof sectionsData === "object" &&
-      "data" in sectionsData &&
-      Array.isArray(sectionsData.data)
-    ) {
-      return sectionsData.data as Section[];
-    }
-    return [];
-  }, [sectionsData]);
+  const grades = useMemo(
+    () => ((gradesData?.data as Grade[] | undefined) ?? []),
+    [gradesData]
+  );
+  const sections = useMemo(
+    () => ((sectionsData as Section[] | undefined) ?? []),
+    [sectionsData]
+  );
 
   return (
     <div className="space-y-6">
@@ -42,7 +46,9 @@ export default function ScheduleBuilderPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold">Schedule Builder</h1>
-            <p className="text-sm text-slate-500">Build schedules for a specific section.</p>
+            <p className="text-sm text-slate-500">
+              Select grade first, then choose a section to build its schedule.
+            </p>
           </div>
         </div>
         <Button variant="outline" onClick={() => navigate("/schedules")}>
@@ -53,34 +59,69 @@ export default function ScheduleBuilderPage() {
 
       {!selectedSectionId ? (
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Select a section to build its schedule
-          </label>
-          {isLoading ? (
-            <div className="py-4 text-center text-slate-500">Loading sections...</div>
-          ) : sections.length === 0 ? (
-            <div className="py-4 text-center text-slate-500">No sections available</div>
-          ) : (
-            <Select
-              onValueChange={(value) => {
-                const section = sections.find((item) => item.id === Number(value));
-                if (!section) return;
-                setSelectedSectionId(section.id);
-                setSelectedSectionName(section.name);
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose a section..." />
-              </SelectTrigger>
-              <SelectContent>
-                {sections.map((section) => (
-                  <SelectItem key={section.id} value={section.id.toString()}>
-                    {section.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Grade (الصف)
+              </label>
+              <Select
+                value={selectedGradeId ? String(selectedGradeId) : undefined}
+                onValueChange={(value) => {
+                  setSelectedGradeId(Number(value));
+                  setSelectedSectionId(null);
+                  setSelectedSectionName("");
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={isGradesLoading ? "Loading grades..." : "Choose grade..."}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {grades.map((grade) => (
+                    <SelectItem key={grade.id} value={String(grade.id)}>
+                      {grade.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700">
+                Section (الشعبة)
+              </label>
+              <Select
+                value={selectedSectionId ? String(selectedSectionId) : undefined}
+                onValueChange={(value) => {
+                  const section = sections.find((item) => item.id === Number(value));
+                  if (!section) return;
+                  setSelectedSectionId(section.id);
+                  setSelectedSectionName(section.name);
+                }}
+                disabled={!selectedGradeId || isSectionsLoading}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={
+                      !selectedGradeId
+                        ? "Choose grade first"
+                        : isSectionsLoading
+                          ? "Loading sections..."
+                          : "Choose section..."
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {sections.map((section) => (
+                    <SelectItem key={section.id} value={String(section.id)}>
+                      {section.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       ) : (
         <>

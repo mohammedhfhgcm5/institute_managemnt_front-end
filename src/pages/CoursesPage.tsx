@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useCourses, useDeleteCourse } from '@/hooks/api/useCourses';
 import { useGrades } from '@/hooks/api/useGrades';
 import { useTeachers } from '@/hooks/api/useTeachers';
+import { useSectionsByGrade } from '@/hooks/api/useSections';
 import {
   useCreateGradeSubject,
   useDeleteGradeSubject,
@@ -11,6 +12,13 @@ import { DataTable, Column } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { SearchSelect } from '@/components/ui/searchselect';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Course } from '@/types/course.types';
 import { GradeSubject } from '@/types/grade-subject.types';
 import { formatDate } from '@/utils/formatters';
@@ -23,6 +31,7 @@ type GradeSubjectWithRelations = GradeSubject & {
   grade?: { id?: number; name?: string };
   subject?: { id?: number; name?: string };
   teacher?: { id?: number; firstName?: string; lastName?: string; name?: string };
+  section?: { id?: number; name?: string };
 };
 
 export default function CoursesPage() {
@@ -48,6 +57,9 @@ export default function CoursesPage() {
   const [teacherQuery, setTeacherQuery] = useState('');
   const [teacherResults, setTeacherResults] = useState<any[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<{ id: number; name: string } | null>(null);
+
+  // SearchSelect states for Section
+  const [selectedSection, setSelectedSection] = useState<{ id: number; name: string } | null>(null);
 
   const { data, isLoading, isError, refetch } = useCourses({
     page,
@@ -81,6 +93,9 @@ export default function CoursesPage() {
     search: teacherQuery 
   });
 
+  const selectedGradeId = selectedGrade?.id || 0;
+  const { data: sectionsForRelations } = useSectionsByGrade(selectedGradeId);
+
   const deleteCourse = useDeleteCourse();
   const createGradeSubject = useCreateGradeSubject();
   const deleteGradeSubject = useDeleteGradeSubject();
@@ -89,6 +104,7 @@ export default function CoursesPage() {
   const subjects = subjectsForRelations?.data || [];
   const grades = gradesForRelations?.data || [];
   const teachers = teachersForRelations?.data || [];
+  const sections = sectionsForRelations || [];
 
   // Update results when data changes
   useEffect(() => {
@@ -115,6 +131,10 @@ export default function CoursesPage() {
     }
   }, [teachers, teacherQuery]);
 
+  useEffect(() => {
+    setSelectedSection(null);
+  }, [selectedGrade?.id]);
+
   const subjectNameById = useMemo(
     () => new Map(subjects.map((subject) => [subject.id, subject.name])),
     [subjects]
@@ -129,6 +149,10 @@ export default function CoursesPage() {
         teachers.map((teacher) => [teacher.id, `${teacher.firstName} ${teacher.lastName}`.trim()])
       ),
     [teachers]
+  );
+  const sectionNameById = useMemo(
+    () => new Map(sections.map((section) => [section.id, section.name])),
+    [sections]
   );
 
   const getSubjectName = (item: GradeSubject) => {
@@ -151,18 +175,26 @@ export default function CoursesPage() {
     return '-';
   };
 
+  const getSectionName = (item: GradeSubject) => {
+    const enriched = item as GradeSubjectWithRelations;
+    if (enriched.section?.name) return enriched.section.name;
+    if (!item.sectionId) return '-';
+    return sectionNameById.get(item.sectionId) || `#${item.sectionId}`;
+  };
+
   const handleCreateGradeSubject = () => {
     const gradeId = selectedGrade?.id;
     const subjectId = selectedSubject?.id;
     const teacherId = selectedTeacher?.id;
+    const sectionId = selectedSection?.id;
 
-    if (!gradeId || !subjectId) {
-      toast.error('Please select both grade and subject.');
+    if (!gradeId || !subjectId || !teacherId || !sectionId) {
+      toast.error('Please select grade, section, subject, and teacher.');
       return;
     }
 
     const exists = (gradeSubjects || []).some(
-      (item) => item.gradeId === gradeId && item.subjectId === subjectId
+      (item) => item.gradeId === gradeId && item.subjectId === subjectId && item.sectionId === sectionId
     );
     if (exists) {
       toast.error('This subject is already linked to the selected grade.');
@@ -170,7 +202,7 @@ export default function CoursesPage() {
     }
 
     createGradeSubject.mutate(
-      { gradeId, subjectId, teacherId },
+      { gradeId, subjectId, teacherId, sectionId },
       {
         onSuccess: () => {
           setSelectedGrade(null);
@@ -179,6 +211,7 @@ export default function CoursesPage() {
           setSubjectQuery('');
           setSelectedTeacher(null);
           setTeacherQuery('');
+          setSelectedSection(null);
         },
       }
     );
@@ -238,6 +271,11 @@ export default function CoursesPage() {
       render: (item) => getTeacherName(item),
     },
     {
+      key: 'sectionId',
+      header: 'Section',
+      render: (item) => getSectionName(item),
+    },
+    {
       key: 'createdAt',
       header: 'Created At',
       render: (item) => formatDate(item.createdAt),
@@ -291,10 +329,10 @@ export default function CoursesPage() {
           <h2 className="text-xl font-semibold">Grade-Subject Relation (grade_subject)</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Each row links one subject (مواد) to one grade (الصف), with optional teacher.
+          Each row links one subject to one grade and one section, with required teacher.
         </p>
 
-        <div className="grid gap-3 md:grid-cols-3 md:items-end">
+        <div className="grid gap-3 md:grid-cols-4 md:items-end">
           <SearchSelect
             label="Grade (الصف)"
             query={gradeQuery}
@@ -322,7 +360,7 @@ export default function CoursesPage() {
           />
 
           <SearchSelect
-            label="Teacher (Optional)"
+            label="Teacher"
             query={teacherQuery}
             setQuery={setTeacherQuery}
             results={teacherResults}
@@ -331,14 +369,54 @@ export default function CoursesPage() {
             setSelected={setSelectedTeacher}
             setValue={(id) => setSelectedTeacher({ id, name: `${teachers.find(t => t.id === id)?.firstName || ''} ${teachers.find(t => t.id === id)?.lastName || ''}`.trim() })}
             display={(teacher) => `${teacher.firstName} ${teacher.lastName}`.trim()}
-            required={false}
+            required={true}
           />
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Section <span className="text-red-500">*</span>
+            </label>
+            <Select
+              value={selectedSection ? String(selectedSection.id) : undefined}
+              onValueChange={(value) => {
+                const selected = sections.find((section) => section.id === Number(value));
+                if (!selected) return;
+                setSelectedSection({ id: selected.id, name: selected.name });
+              }}
+              disabled={!selectedGrade}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue
+                  placeholder={
+                    !selectedGrade
+                      ? "Select grade first"
+                      : sections.length === 0
+                        ? "No sections for selected grade"
+                        : "Select section"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {sections.map((section) => (
+                  <SelectItem key={section.id} value={String(section.id)}>
+                    {section.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Button
           type="button"
           onClick={handleCreateGradeSubject}
-          disabled={!selectedGrade || !selectedSubject || createGradeSubject.isPending}
+          disabled={
+            !selectedGrade ||
+            !selectedSubject ||
+            !selectedTeacher ||
+            !selectedSection ||
+            createGradeSubject.isPending
+          }
           className="w-full md:w-auto"
         >
           {createGradeSubject.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

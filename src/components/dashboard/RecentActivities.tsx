@@ -1,36 +1,60 @@
-import { useRecentActivities } from '@/hooks/api/useDashboard';
+import { useDashboardStats } from '@/hooks/api/useDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { formatDateTime } from '@/utils/formatters';
-import { Activity } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { formatCurrency, formatDateTime } from '@/utils/formatters';
+
+const formatStudentName = (firstName: string, lastName: string): string => {
+  const fullName = `${firstName} ${lastName}`.trim();
+  return fullName || 'Unknown Student';
+};
 
 export function RecentActivities() {
-  const { data: activities, isLoading } = useRecentActivities();
+  const { data: stats, isLoading } = useDashboardStats();
 
   if (isLoading) return <LoadingSpinner />;
+  if (!stats) return null;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>النشاطات الأخيرة</CardTitle>
+        <CardTitle>Recent Payments</CardTitle>
       </CardHeader>
+
       <CardContent>
-        <div className="space-y-4">
-          {(!activities || activities.length === 0) ? (
-            <p className="text-center text-muted-foreground py-4">
-              لا توجد نشاطات حديثة
+        <div className="space-y-3">
+          {stats.recentPayments.length === 0 ? (
+            <p className="py-4 text-center text-muted-foreground">
+              No recent payments found.
             </p>
           ) : (
-            activities.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Activity className="h-4 w-4 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm">{activity.message}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateTime(activity.timestamp)}
+            stats.recentPayments.map((payment) => (
+              <div
+                key={payment.id}
+                className="flex items-start justify-between gap-3 rounded-md border p-3"
+              >
+                <div className="space-y-1">
+                  <p className="text-sm font-medium">
+                    {formatStudentName(
+                      payment.student.firstName,
+                      payment.student.lastName
+                    )}
                   </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDateTime(payment.paymentDate ?? payment.createdAt)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Receipt: {payment.receiptNumber || '-'}
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="text-sm font-semibold">
+                    {formatCurrency(payment.finalAmount)}
+                  </p>
+                  <Badge variant="secondary" className="mt-1 capitalize">
+                    {payment.status}
+                  </Badge>
                 </div>
               </div>
             ))

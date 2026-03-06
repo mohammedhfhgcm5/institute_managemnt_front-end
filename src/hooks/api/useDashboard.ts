@@ -1,12 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '@/services/dashboard.service';
+import {
+  dashboardService,
+  DashboardAttendanceParams,
+  DashboardFinancialParams,
+} from '@/services/dashboard.service';
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,
   stats: () => [...dashboardKeys.all, 'stats'] as const,
-  attendanceChart: () => [...dashboardKeys.all, 'attendance-chart'] as const,
-  financialChart: () => [...dashboardKeys.all, 'financial-chart'] as const,
-  recentActivities: () => [...dashboardKeys.all, 'recent-activities'] as const,
+  attendanceSummary: (params?: DashboardAttendanceParams) =>
+    [...dashboardKeys.all, 'attendance-summary', params] as const,
+  financialSummary: (params?: DashboardFinancialParams) =>
+    [...dashboardKeys.all, 'financial-summary', params] as const,
 };
 
 export const useDashboardStats = () => {
@@ -16,23 +21,16 @@ export const useDashboardStats = () => {
   });
 };
 
-export const useAttendanceChart = () => {
+export const useAttendanceSummary = (params?: DashboardAttendanceParams) => {
   return useQuery({
-    queryKey: dashboardKeys.attendanceChart(),
-    queryFn: () => dashboardService.getAttendanceChart(),
+    queryKey: dashboardKeys.attendanceSummary(params),
+    queryFn: () => dashboardService.getAttendanceSummary(params),
   });
 };
 
-export const useFinancialChart = () => {
+export const useFinancialSummary = (params?: DashboardFinancialParams) => {
   return useQuery({
-    queryKey: dashboardKeys.financialChart(),
-    queryFn: () => dashboardService.getFinancialChart(),
-  });
-};
-
-export const useRecentActivities = () => {
-  return useQuery({
-    queryKey: dashboardKeys.recentActivities(),
-    queryFn: () => dashboardService.getRecentActivities(),
+    queryKey: dashboardKeys.financialSummary(params),
+    queryFn: () => dashboardService.getFinancialSummary(params),
   });
 };
