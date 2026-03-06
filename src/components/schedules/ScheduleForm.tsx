@@ -25,6 +25,7 @@ import {
 } from "@/hooks/api/useSchedules";
 import { useSections } from "@/hooks/api/useSections";
 import { useGradeSubjects } from "@/hooks/api/useGradeSubjects";
+import { useLocale } from "@/hooks/useLocale";
 import { Schedule } from "@/types/schedule.types";
 import { GradeSubject } from "@/types/grade-subject.types";
 import { Loader2 } from "lucide-react";
@@ -103,6 +104,7 @@ export function ScheduleForm({
   onOpenChange,
   schedule,
 }: ScheduleFormProps) {
+  const { text } = useLocale();
   const createSchedule = useCreateSchedule();
   const updateSchedule = useUpdateSchedule();
   const isEditing = !!schedule;
@@ -176,13 +178,13 @@ export function ScheduleForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Schedule" : "Add Schedule"}</DialogTitle>
+          <DialogTitle>{isEditing ? text("تعديل الحصة", "Edit Schedule") : text("إضافة حصة", "Add Schedule")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Section *</Label>
+              <Label>{text("الشعبة", "Section")} *</Label>
               <Select
                 value={
                   watch("sectionId") ? String(watch("sectionId")) : undefined
@@ -194,7 +196,9 @@ export function ScheduleForm({
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      isSectionsLoading ? "Loading sections..." : "Select section"
+                      isSectionsLoading
+                        ? text("جاري تحميل الشعب...", "Loading sections...")
+                        : text("اختر الشعبة", "Select section")
                     }
                   />
                 </SelectTrigger>
@@ -212,7 +216,7 @@ export function ScheduleForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Grade Subject *</Label>
+              <Label>{text("مادة الصف", "Grade Subject")} *</Label>
               <Select
                 value={
                   watch("gradeSubjectId")
@@ -229,8 +233,8 @@ export function ScheduleForm({
                   <SelectValue
                     placeholder={
                       isGradeSubjectsLoading
-                        ? "Loading grade subjects..."
-                        : "Select grade subject"
+                        ? text("جاري تحميل مواد الصف...", "Loading grade subjects...")
+                        : text("اختر مادة الصف", "Select grade subject")
                     }
                   />
                 </SelectTrigger>
@@ -258,7 +262,7 @@ export function ScheduleForm({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Day *</Label>
+              <Label>{text("اليوم", "Day")} *</Label>
               <Select
                 value={watch("dayOfWeek")}
                 onValueChange={(val) =>
@@ -284,7 +288,7 @@ export function ScheduleForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Status *</Label>
+              <Label>{text("الحالة", "Status")} *</Label>
               <Select
                 value={watch("status")}
                 onValueChange={(val) =>
@@ -297,9 +301,9 @@ export function ScheduleForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="scheduled">{text("مجدولة", "Scheduled")}</SelectItem>
+                  <SelectItem value="cancelled">{text("ملغاة", "Cancelled")}</SelectItem>
+                  <SelectItem value="completed">{text("مكتملة", "Completed")}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.status && (
@@ -310,7 +314,7 @@ export function ScheduleForm({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Start Time *</Label>
+              <Label>{text("وقت البداية", "Start Time")} *</Label>
               <Input
                 type="time"
                 value={watch("startTime")}
@@ -326,7 +330,7 @@ export function ScheduleForm({
             </div>
 
             <div className="space-y-2">
-              <Label>End Time *</Label>
+              <Label>{text("وقت النهاية", "End Time")} *</Label>
               <Input
                 type="time"
                 value={watch("endTime")}
@@ -343,13 +347,13 @@ export function ScheduleForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Room</Label>
+            <Label>{text("الغرفة", "Room")}</Label>
             <Input
               value={watch("room") || ""}
               onChange={(event) =>
                 setValue("room", event.target.value, { shouldValidate: true })
               }
-              placeholder="Room 101"
+              placeholder={text("الغرفة 101", "Room 101")}
             />
           </div>
 
@@ -359,11 +363,11 @@ export function ScheduleForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? text("تحديث", "Update") : text("إنشاء", "Create")}
             </Button>
           </DialogFooter>
         </form>

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { courseService } from '@/services/course.service';
 import { PaginationParams } from '@/types/common.types';
 import { CreateCourseData, UpdateCourseData } from '@/types/course.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const courseKeys = {
@@ -33,10 +34,10 @@ export const useCreateCourse = () => {
     mutationFn: (data: CreateCourseData) => courseService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
-      toast.success('تم إضافة المادة بنجاح');
+      toast.success(localize('تم إضافة المادة بنجاح', 'Subject created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -49,10 +50,10 @@ export const useUpdateCourse = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: courseKeys.detail(variables.id) });
-      toast.success('تم تحديث المادة بنجاح');
+      toast.success(localize('تم تحديث المادة بنجاح', 'Subject updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -63,10 +64,10 @@ export const useDeleteCourse = () => {
     mutationFn: (id: number) => courseService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
-      toast.success('تم حذف المادة بنجاح');
+      toast.success(localize('تم حذف المادة بنجاح', 'Subject deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentService } from '@/services/student.service';
 import { PaginationParams } from '@/types/common.types';
 import { CreateStudentData, UpdateStudentData } from '@/types/student.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const studentKeys = {
@@ -42,10 +43,10 @@ export const useCreateStudent = () => {
     mutationFn: (data: CreateStudentData) => studentService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.lists() });
-      toast.success('تم إضافة الطالب بنجاح');
+      toast.success(localize('تم إضافة الطالب بنجاح', 'Student created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء إضافة الطالب');
+      toast.error(error.response?.data?.message || localize('حدث خطأ أثناء إضافة الطالب', 'Failed to create student'));
     },
   });
 };
@@ -58,10 +59,10 @@ export const useUpdateStudent = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: studentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: studentKeys.detail(variables.id) });
-      toast.success('تم تحديث بيانات الطالب بنجاح');
+      toast.success(localize('تم تحديث بيانات الطالب بنجاح', 'Student updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء التحديث');
+      toast.error(error.response?.data?.message || localize('حدث خطأ أثناء التحديث', 'Failed to update student'));
     },
   });
 };
@@ -72,10 +73,10 @@ export const useDeleteStudent = () => {
     mutationFn: (id: number) => studentService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.lists() });
-      toast.success('تم حذف الطالب بنجاح');
+      toast.success(localize('تم حذف الطالب بنجاح', 'Student deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ أثناء الحذف');
+      toast.error(error.response?.data?.message || localize('حدث خطأ أثناء الحذف', 'Failed to delete student'));
     },
   });
 };

@@ -20,6 +20,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useCreateNotification } from "@/hooks/api/useNotifications";
+import { useLocale } from "@/hooks/useLocale";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,6 +36,7 @@ export function NotificationForm({
   open,
   onOpenChange,
 }: NotificationFormProps) {
+  const { text } = useLocale();
   const createNotification = useCreateNotification();
   const defaultValues: Partial<NotificationFormData> = {
     type: "info",
@@ -55,7 +57,7 @@ export function NotificationForm({
 
   const onSubmit = (data: NotificationFormData) => {
     if (!data.recipientId || data.recipientId < 1) {
-      toast.error("يرجى إدخال رقم مستخدم صالح");
+      toast.error(text("يرجى إدخال رقم مستخدم صالح", "Please enter a valid user ID"));
       return;
     }
 
@@ -80,11 +82,11 @@ export function NotificationForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>إرسال إشعار</DialogTitle>
+          <DialogTitle>{text("إرسال إشعار", "Send Notification")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>رقم المستخدم</Label>
+            <Label>{text("رقم المستخدم", "User ID")}</Label>
             <Input
               type="number"
               min={1}
@@ -93,7 +95,7 @@ export function NotificationForm({
                 setValueAs: (value) =>
                   value === "" ? undefined : Number(value),
               })}
-              placeholder="مثال: 12"
+              placeholder={text("مثال: 12", "Example: 12")}
             />
             {errors.recipientId && (
               <p className="text-sm text-destructive">
@@ -103,18 +105,18 @@ export function NotificationForm({
           </div>
 
           <div className="space-y-2">
-            <Label>العنوان</Label>
-            <Input {...register("title")} placeholder="عنوان الإشعار" />
+            <Label>{text("العنوان", "Title")}</Label>
+            <Input {...register("title")} placeholder={text("عنوان الإشعار", "Notification title")} />
             {errors.title && (
               <p className="text-sm text-destructive">{errors.title.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label>الرسالة</Label>
+            <Label>{text("الرسالة", "Message")}</Label>
             <Textarea
               {...register("message")}
-              placeholder="محتوى الإشعار"
+              placeholder={text("محتوى الإشعار", "Notification content")}
               rows={3}
             />
             {errors.message && (
@@ -125,7 +127,7 @@ export function NotificationForm({
           </div>
 
           <div className="space-y-2">
-            <Label>النوع</Label>
+            <Label>{text("النوع", "Type")}</Label>
             <Select
               value={watch("type")}
               onValueChange={(val) =>
@@ -135,13 +137,13 @@ export function NotificationForm({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر النوع" />
+                <SelectValue placeholder={text("اختر النوع", "Select type")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="info">معلومات</SelectItem>
-                <SelectItem value="warning">تحذير</SelectItem>
-                <SelectItem value="alert">تنبيه</SelectItem>
-                <SelectItem value="success">نجاح</SelectItem>
+                <SelectItem value="info">{text("معلومات", "Info")}</SelectItem>
+                <SelectItem value="warning">{text("تحذير", "Warning")}</SelectItem>
+                <SelectItem value="alert">{text("تنبيه", "Alert")}</SelectItem>
+                <SelectItem value="success">{text("نجاح", "Success")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.type && (
@@ -150,7 +152,7 @@ export function NotificationForm({
           </div>
 
           <div className="space-y-2">
-            <Label>القناة</Label>
+            <Label>{text("القناة", "Channel")}</Label>
             <Select
               value={watch("channel")}
               onValueChange={(val) =>
@@ -160,12 +162,12 @@ export function NotificationForm({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="اختر القناة" />
+                <SelectValue placeholder={text("اختر القناة", "Select channel")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="in_app">داخل التطبيق</SelectItem>
-                <SelectItem value="email">بريد إلكتروني</SelectItem>
-                <SelectItem value="sms">رسالة نصية</SelectItem>
+                <SelectItem value="in_app">{text("داخل التطبيق", "In app")}</SelectItem>
+                <SelectItem value="email">{text("بريد إلكتروني", "Email")}</SelectItem>
+                <SelectItem value="sms">{text("رسالة نصية", "SMS")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.channel && (
@@ -181,13 +183,13 @@ export function NotificationForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              إلغاء
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={createNotification.isPending}>
               {createNotification.isPending && (
                 <Loader2 className="ml-2 h-4 w-4 animate-spin" />
               )}
-              إرسال
+              {text("إرسال", "Send")}
             </Button>
           </DialogFooter>
         </form>

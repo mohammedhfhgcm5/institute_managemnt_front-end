@@ -21,6 +21,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useCreateExpense, useUpdateExpense } from '@/hooks/api/useExpenses';
+import { useLocale } from '@/hooks/useLocale';
 import { Expense } from '@/types/expense.types';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
@@ -34,6 +35,7 @@ interface ExpenseFormProps {
 }
 
 export function ExpenseForm({ open, onOpenChange, expense }: ExpenseFormProps) {
+  const { text } = useLocale();
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
   const isEditing = !!expense;
@@ -93,49 +95,49 @@ export function ExpenseForm({ open, onOpenChange, expense }: ExpenseFormProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'تعديل المصروف' : 'إضافة مصروف'}</DialogTitle>
+          <DialogTitle>{isEditing ? text('تعديل المصروف', 'Edit Expense') : text('إضافة مصروف', 'Add Expense')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>العنوان *</Label>
+            <Label>{text('العنوان', 'Title')} *</Label>
             <Input {...register('title')} />
             {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>المبلغ *</Label>
+              <Label>{text('المبلغ', 'Amount')} *</Label>
               <Input type="number" {...register('amount', { valueAsNumber: true })} />
               {errors.amount && <p className="text-sm text-destructive">{errors.amount.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label>التصنيف *</Label>
+              <Label>{text('التصنيف', 'Category')} *</Label>
               <Select value={watch('category')} onValueChange={(val) => setValue('category', val as ExpenseFormData['category'])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="salary">رواتب</SelectItem>
-                  <SelectItem value="maintenance">صيانة</SelectItem>
-                  <SelectItem value="supplies">مستلزمات</SelectItem>
-                  <SelectItem value="utilities">مرافق</SelectItem>
-                  <SelectItem value="other">أخرى</SelectItem>
+                  <SelectItem value="salary">{text('رواتب', 'Salaries')}</SelectItem>
+                  <SelectItem value="maintenance">{text('صيانة', 'Maintenance')}</SelectItem>
+                  <SelectItem value="supplies">{text('مستلزمات', 'Supplies')}</SelectItem>
+                  <SelectItem value="utilities">{text('مرافق', 'Utilities')}</SelectItem>
+                  <SelectItem value="other">{text('أخرى', 'Other')}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.category && <p className="text-sm text-destructive">{errors.category.message}</p>}
             </div>
           </div>
           <div className="space-y-2">
-            <Label>التاريخ *</Label>
+            <Label>{text('التاريخ', 'Date')} *</Label>
             <Input type="date" {...register('date')} />
             {errors.date && <p className="text-sm text-destructive">{errors.date.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label>الوصف</Label>
+            <Label>{text('الوصف', 'Description')}</Label>
             <Textarea {...register('description')} rows={2} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>إلغاء</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{text('إلغاء', 'Cancel')}</Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? 'تحديث' : 'إضافة'}
+              {isEditing ? text('تحديث', 'Update') : text('إضافة', 'Add')}
             </Button>
           </DialogFooter>
         </form>

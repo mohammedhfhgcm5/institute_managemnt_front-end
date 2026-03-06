@@ -12,8 +12,10 @@ import { useUnreadCount, useMyNotifications, useMarkAsRead } from '@/hooks/api/u
 import { Badge } from '@/components/ui/badge';
 import { formatDateTime, getStatusLabel } from '@/utils/formatters';
 import { useNavigate } from 'react-router-dom';
+import { useLocale } from '@/hooks/useLocale';
 
 export function NotificationBell() {
+  const { text } = useLocale();
   const { data: unreadCount = 0 } = useUnreadCount();
   const { data: notificationsData } = useMyNotifications({ limit: 5 });
   const markAsRead = useMarkAsRead();
@@ -41,17 +43,17 @@ export function NotificationBell() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-80">
         <DropdownMenuLabel className="flex items-center justify-between">
-          <span>الإشعارات</span>
+          <span>{text('الإشعارات', 'Notifications')}</span>
           {unreadCount > 0 && (
             <Badge variant="secondary" className="text-xs">
-              {unreadCount} جديد
+              {unreadCount} {text('جديد', 'new')}
             </Badge>
           )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {notifications.length === 0 ? (
           <div className="p-4 text-center text-sm text-muted-foreground">
-            لا توجد إشعارات
+            {text('لا توجد إشعارات', 'No notifications')}
           </div>
         ) : (
           notifications.map((notification) => (
@@ -84,7 +86,7 @@ export function NotificationBell() {
           className="text-center text-primary cursor-pointer justify-center"
           onClick={() => navigate('/notifications')}
         >
-          عرض جميع الإشعارات
+          {text('عرض جميع الإشعارات', 'View all notifications')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

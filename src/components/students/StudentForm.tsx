@@ -24,6 +24,7 @@ import { useCreateStudent, useUpdateStudent } from "@/hooks/api/useStudents";
 import { useParents } from "@/hooks/api/useParents";
 import { useSections, useSectionsByGrade } from "@/hooks/api/useSections";
 import { useGrades } from "@/hooks/api/useGrades";
+import { useLocale } from "@/hooks/useLocale";
 import { Student } from "@/types/student.types";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -37,6 +38,7 @@ interface StudentFormProps {
 }
 
 export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
+  const { text } = useLocale();
   const createStudent = useCreateStudent();
   const updateStudent = useUpdateStudent();
   const isEditing = !!student;
@@ -179,13 +181,13 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Student" : "Add Student"}</DialogTitle>
+          <DialogTitle>{isEditing ? text("تعديل الطالب", "Edit Student") : text("إضافة طالب", "Add Student")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>First Name *</Label>
+              <Label>{text("الاسم الأول", "First Name")} *</Label>
               <Input {...register("firstName")} />
               {errors.firstName && (
                 <p className="text-sm text-destructive">{errors.firstName.message}</p>
@@ -193,7 +195,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Last Name *</Label>
+              <Label>{text("اسم العائلة", "Last Name")} *</Label>
               <Input {...register("lastName")} />
               {errors.lastName && (
                 <p className="text-sm text-destructive">{errors.lastName.message}</p>
@@ -201,7 +203,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Date of Birth *</Label>
+              <Label>{text("تاريخ الميلاد", "Date of Birth")} *</Label>
               <Input type="date" {...register("dateOfBirth")} />
               {errors.dateOfBirth && (
                 <p className="text-sm text-destructive">{errors.dateOfBirth.message}</p>
@@ -209,7 +211,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Gender *</Label>
+              <Label>{text("الجنس", "Gender")} *</Label>
               <Select
                 value={watch("gender")}
                 onValueChange={(val) => setValue("gender", val as "male" | "female")}
@@ -218,8 +220,8 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="male">{text("ذكر", "Male")}</SelectItem>
+                  <SelectItem value="female">{text("أنثى", "Female")}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.gender && (
@@ -229,7 +231,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
 
             <div className="space-y-2">
               <SearchSelect
-                label="Parent"
+                label={text("ولي الأمر", "Parent")}
                 query={parentQuery}
                 setQuery={setParentQuery}
                 results={parentResults}
@@ -246,7 +248,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Grade (الصف)</Label>
+              <Label>{text("الصف", "Grade")}</Label>
               <Select
                 value={selectedGradeId ? String(selectedGradeId) : undefined}
                 onValueChange={(val) => {
@@ -256,7 +258,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select grade" />
+                  <SelectValue placeholder={text("اختر الصف", "Select grade")} />
                 </SelectTrigger>
                 <SelectContent>
                   {grades.map((grade) => (
@@ -269,7 +271,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Section</Label>
+              <Label>{text("الشعبة", "Section")}</Label>
               <Select
                 value={watch("sectionId") ? String(watch("sectionId")) : undefined}
                 onValueChange={(val) => setValue("sectionId", Number(val))}
@@ -277,7 +279,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={selectedGradeId ? "Select section" : "Select grade first"}
+                    placeholder={selectedGradeId ? text("اختر الشعبة", "Select section") : text("اختر الصف أولاً", "Select grade first")}
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -291,7 +293,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Status</Label>
+              <Label>{text("الحالة", "Status")}</Label>
               <Select
                 value={watch("status") || "active"}
                 onValueChange={(val) => setValue("status", val as StudentFormData["status"])}
@@ -300,26 +302,26 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="graduated">Graduated</SelectItem>
+                  <SelectItem value="active">{text("نشط", "Active")}</SelectItem>
+                  <SelectItem value="inactive">{text("غير نشط", "Inactive")}</SelectItem>
+                  <SelectItem value="graduated">{text("متخرج", "Graduated")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2 sm:col-span-2">
-              <Label>Address</Label>
+              <Label>{text("العنوان", "Address")}</Label>
               <Input {...register("address")} />
             </div>
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? text("تحديث", "Update") : text("إنشاء", "Create")}
             </Button>
           </DialogFooter>
         </form>

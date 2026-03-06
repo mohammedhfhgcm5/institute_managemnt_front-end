@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { useCreateSection, useUpdateSection } from "@/hooks/api/useSections";
 import { useGrades } from "@/hooks/api/useGrades";
+import { useLocale } from "@/hooks/useLocale";
 import { Section } from "@/types/section.types";
 import { Loader2 } from "lucide-react";
 
@@ -49,6 +50,7 @@ const defaultValues: SectionFormData = {
 };
 
 export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
+  const { text } = useLocale();
   const createSection = useCreateSection();
   const updateSection = useUpdateSection();
   const { data: gradesData, isLoading: isGradesLoading } = useGrades({
@@ -116,13 +118,13 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Section" : "Add Section"}
+            {isEditing ? text("تعديل الشعبة", "Edit Section") : text("إضافة شعبة", "Add Section")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>Grade *</Label>
+            <Label>{text("الصف", "Grade")} *</Label>
             <Select
               value={watch("gradeId") ? String(watch("gradeId")) : undefined}
               onValueChange={(val) =>
@@ -132,7 +134,9 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
               <SelectTrigger>
                 <SelectValue
                   placeholder={
-                    isGradesLoading ? "Loading grades..." : "Select grade"
+                    isGradesLoading
+                      ? text("جاري تحميل الصفوف...", "Loading grades...")
+                      : text("اختر الصف", "Select grade")
                   }
                 />
               </SelectTrigger>
@@ -152,15 +156,15 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Section Name *</Label>
-            <Input {...register("name")} placeholder="A" />
+            <Label>{text("اسم الشعبة", "Section Name")} *</Label>
+            <Input {...register("name")} placeholder={text("أ", "A")} />
             {errors.name && (
               <p className="text-sm text-destructive">{errors.name.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label>Academic Year *</Label>
+            <Label>{text("السنة الدراسية", "Academic Year")} *</Label>
             <Input {...register("academicYear")} placeholder="2025-2026" />
             {errors.academicYear && (
               <p className="text-sm text-destructive">
@@ -170,7 +174,7 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Max Students</Label>
+            <Label>{text("الحد الأقصى للطلاب", "Max Students")}</Label>
             <Input
               type="number"
               min={1}
@@ -187,7 +191,7 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Status *</Label>
+            <Label>{text("الحالة", "Status")} *</Label>
             <Select
               value={watch("status")}
               onValueChange={(val) =>
@@ -200,8 +204,8 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="active">{text("نشط", "Active")}</SelectItem>
+                <SelectItem value="inactive">{text("غير نشط", "Inactive")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
@@ -217,11 +221,11 @@ export function SectionForm({ open, onOpenChange, section }: SectionFormProps) {
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? text("تحديث", "Update") : text("إنشاء", "Create")}
             </Button>
           </DialogFooter>
         </form>

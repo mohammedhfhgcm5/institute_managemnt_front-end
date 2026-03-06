@@ -12,10 +12,12 @@ import {
 } from "@/components/ui/select";
 import { useGrades } from "@/hooks/api/useGrades";
 import { useSectionsByGrade } from "@/hooks/api/useSections";
+import { useLocale } from "@/hooks/useLocale";
 import { Grade } from "@/types/grade.types";
 import { Section } from "@/types/section.types";
 
 export default function ScheduleBuilderPage() {
+  const { text, isArabic } = useLocale();
   const navigate = useNavigate();
   const [selectedGradeId, setSelectedGradeId] = useState<number>(0);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
@@ -45,15 +47,18 @@ export default function ScheduleBuilderPage() {
             <LayoutGrid className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Schedule Builder</h1>
+            <h1 className="text-2xl font-bold">{text("منشئ الجداول", "Schedule Builder")}</h1>
             <p className="text-sm text-slate-500">
-              Select grade first, then choose a section to build its schedule.
+              {text(
+                "اختر الصف أولاً ثم اختر الشعبة لبناء جدولها.",
+                "Select grade first, then choose a section to build its schedule."
+              )}
             </p>
           </div>
         </div>
         <Button variant="outline" onClick={() => navigate("/schedules")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Schedules
+          <ArrowLeft className={isArabic ? "ml-2 h-4 w-4" : "mr-2 h-4 w-4"} />
+          {text("العودة للجداول", "Back to Schedules")}
         </Button>
       </div>
 
@@ -62,7 +67,7 @@ export default function ScheduleBuilderPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-slate-700">
-                Grade (الصف)
+                {text("الصف", "Grade")}
               </label>
               <Select
                 value={selectedGradeId ? String(selectedGradeId) : undefined}
@@ -74,7 +79,11 @@ export default function ScheduleBuilderPage() {
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
-                    placeholder={isGradesLoading ? "Loading grades..." : "Choose grade..."}
+                    placeholder={
+                      isGradesLoading
+                        ? text("جاري تحميل الصفوف...", "Loading grades...")
+                        : text("اختر الصف...", "Choose grade...")
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -89,7 +98,7 @@ export default function ScheduleBuilderPage() {
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-slate-700">
-                Section (الشعبة)
+                {text("الشعبة", "Section")}
               </label>
               <Select
                 value={selectedSectionId ? String(selectedSectionId) : undefined}
@@ -105,10 +114,10 @@ export default function ScheduleBuilderPage() {
                   <SelectValue
                     placeholder={
                       !selectedGradeId
-                        ? "Choose grade first"
+                        ? text("اختر الصف أولاً", "Choose grade first")
                         : isSectionsLoading
-                          ? "Loading sections..."
-                          : "Choose section..."
+                          ? text("جاري تحميل الشعب...", "Loading sections...")
+                          : text("اختر الشعبة...", "Choose section...")
                     }
                   />
                 </SelectTrigger>
@@ -134,7 +143,7 @@ export default function ScheduleBuilderPage() {
                 setSelectedSectionName("");
               }}
             >
-              Change Section
+              {text("تغيير الشعبة", "Change Section")}
             </Button>
           </div>
         </>

@@ -3,7 +3,9 @@ import { Calendar, Download, Save, GripVertical, Clock, MapPin, User, LayoutGrid
 import { useSchedules, useSchedulesBySection, useDeleteSchedule, useCreateSchedule, useUpdateSchedule } from "@/hooks/api/useSchedules";
 import { useGradeSubjects } from "@/hooks/api/useGradeSubjects";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useLocale } from "@/hooks/useLocale";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Schedule } from "@/types/schedule.types";
 import { DayOfWeek } from '@/types/common.types';
@@ -118,6 +120,7 @@ const extractTimeFromISO = (isoString: string): string => {
 };
 
 export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: ScheduleBuilderProps) {
+  const { text } = useLocale();
   const permissions = usePermissions();
   const canCreateOrEdit = permissions.canManageAttendance;
   const canDelete = permissions.isAdmin;
@@ -147,7 +150,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
   const availableModules: Module[] = useMemo(() => {
     return sectionGradeSubjects.map((gs: any) => {
-      const subjectName = gs.subject?.name || 'Unknown';
+      const subjectName = gs.subject?.name || text('غير معروف', 'Unknown');
       const gradeName = gs.grade?.name || '';
       const teacherFirstName = gs.teacher?.firstName || '';
       const teacherLastName = gs.teacher?.lastName || '';
@@ -422,31 +425,33 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
   return (
     <>
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-12 xl:gap-6">
         {/* Main Schedule Area */}
-        <div className="col-span-9">
+        <div className="min-w-0 xl:col-span-9">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200">
             {/* Schedule Header */}
             <div className="p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="bg-blue-100 p-3 rounded-lg">
                     <Calendar className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold text-slate-800">{sectionName}</h2>
-                    <p className="text-sm text-slate-500 mt-1">Academic Year 2024-2025 • Spring Semester</p>
+                    <p className="text-sm text-slate-500 mt-1">
+                      {text('السنة الدراسية 2024-2025 • الفصل الربيعي', 'Academic Year 2024-2025 • Spring Semester')}
+                    </p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <Button variant="outline" className="flex items-center gap-2" onClick={handleExportPdf}>
                     <Download className="w-4 h-4" />
-                    Export PDF
+                    {text('تصدير PDF', 'Export PDF')}
                   </Button>
                   <Button onClick={() => refetch()} className="flex items-center gap-2">
                     <Save className="w-4 h-4" />
-                    Refresh
+                    {text('تحديث', 'Refresh')}
                   </Button>
                 </div>
               </div>
@@ -454,11 +459,11 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
             {/* Schedule Grid */}
             <div className="p-6 overflow-x-auto">
-              <table className="w-full border-collapse">
+              <table className="w-full min-w-[900px] border-collapse">
                 <thead>
                   <tr>
                     <th className="text-left p-3 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 w-32">
-                      TIME
+                      {text('الوقت', 'TIME')}
                     </th>
                     {DAYS.map(day => (
                       <th key={day} className="text-center p-3 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200">
@@ -506,7 +511,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                                 </div>
                                 <div className="text-xs text-slate-600 flex items-center gap-1 mb-1">
                                   <MapPin className="w-3 h-3" />
-                                  {scheduleItem.room || 'No room'}
+                                  {scheduleItem.room || text('بدون غرفة', 'No room')}
                                 </div>
                                 <div className="text-xs text-slate-600">
                                   {module.teacher}
@@ -515,7 +520,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                             ) : (
                               canCreateOrEdit && (
                                 <div className="h-full flex items-center justify-center text-slate-300 hover:text-slate-400 hover:bg-slate-50 rounded transition-colors">
-                                  <span className="text-xs">Drop here</span>
+                                  <span className="text-xs">{text('أسقط هنا', 'Drop here')}</span>
                                 </div>
                               )
                             )}
@@ -531,25 +536,25 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
         </div>
 
         {/* Module Library Sidebar */}
-        <div className="col-span-3">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 sticky top-6">
+        <div className="min-w-0 xl:col-span-3">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 xl:sticky xl:top-6">
             <div className="p-4 border-b border-slate-200">
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Layers className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-bold text-slate-800">Module Library</h3>
+                  <h3 className="font-bold text-slate-800">{text('مكتبة الحصص', 'Module Library')}</h3>
                 </div>
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                  DRAG TO GRID
+                  {text('اسحب إلى الجدول', 'DRAG TO GRID')}
                 </span>
               </div>
               
-              <input
+              <Input
                 type="text"
-                placeholder="Search modules..."
+                placeholder={text('ابحث عن الحصص...', 'Search modules...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full"
               />
             </div>
 
@@ -577,14 +582,14 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
             <div className="p-4">
               <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                Available Modules ({filteredModules.length})
+                {text('الحصص المتاحة', 'Available Modules')} ({filteredModules.length})
               </h4>
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
                 {isLoading ? (
-                  <div className="text-center py-8 text-slate-500">Loading...</div>
+                  <div className="text-center py-8 text-slate-500">{text('جاري التحميل...', 'Loading...')}</div>
                 ) : filteredModules.length === 0 ? (
                   <div className="text-center py-8 text-slate-500 text-sm">
-                    No modules found for this section
+                    {text('لا توجد حصص متاحة لهذه الشعبة', 'No modules found for this section')}
                   </div>
                 ) : (
                   filteredModules.map(module => (
@@ -605,7 +610,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                       <div className="text-xs text-slate-600 space-y-1">
                         <div className="flex items-center gap-1">
                           <User className="w-3 h-3" />
-                          {module.teacher || 'No teacher'}
+                          {module.teacher || text('بدون معلم', 'No teacher')}
                         </div>
                       </div>
                     </div>
@@ -620,9 +625,12 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                   <span className="text-blue-700 text-xs">i</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-blue-900 mb-1">Quick Tip</h4>
+                  <h4 className="font-semibold text-sm text-blue-900 mb-1">{text('نصيحة سريعة', 'Quick Tip')}</h4>
                   <p className="text-xs text-blue-700">
-                    Drag modules from the library and drop them onto the schedule grid to assign classes.
+                    {text(
+                      'اسحب الحصص من المكتبة وأفلتها داخل الجدول لتوزيع الحصص الدراسية.',
+                      'Drag modules from the library and drop them onto the schedule grid to assign classes.'
+                    )}
                   </p>
                 </div>
               </div>
@@ -634,8 +642,8 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Schedule"
-        description="Are you sure you want to delete this schedule?"
+        title={text("حذف الحصة", "Delete Schedule")}
+        description={text("هل أنت متأكد من حذف هذه الحصة؟", "Are you sure you want to delete this schedule?")}
         onConfirm={() => {
           if (deletingId) {
             const keyToDelete = Object.keys(schedule).find(
@@ -667,7 +675,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
           }
         }}
         isLoading={deleteSchedule.isPending}
-        confirmText="Delete"
+        confirmText={text("حذف", "Delete")}
       />
 
       <style>{`

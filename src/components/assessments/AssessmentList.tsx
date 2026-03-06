@@ -16,6 +16,7 @@ import {
   formatPercentage,
 } from "@/utils/formatters";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useLocale } from "@/hooks/useLocale";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AssessmentForm } from "./AssessmentForm";
@@ -37,6 +38,7 @@ const toNumber = (value: unknown): number | undefined => {
 };
 
 export function AssessmentList() {
+  const { text } = useLocale();
   const permissions = usePermissions();
   const canCreateOrEdit = permissions.canManageGrades;
   const canDelete = permissions.isAdmin;
@@ -62,7 +64,7 @@ export function AssessmentList() {
     { key: "id", header: "#" },
     {
       key: "student",
-      header: "Student",
+      header: text("الطالب", "Student"),
       render: (item) =>
         item.student
           ? `${item.student.firstName || ""} ${item.student.lastName || ""}`.trim()
@@ -70,7 +72,7 @@ export function AssessmentList() {
     },
     {
       key: "subject",
-      header: "Subject",
+      header: text("المادة", "Subject"),
       render: (item) => {
         const grade = item.gradeSubject?.grade?.name;
         const subject = item.gradeSubject?.subject?.name;
@@ -80,11 +82,11 @@ export function AssessmentList() {
     },
     {
       key: "title",
-      header: "Title",
+      header: text("العنوان", "Title"),
     },
     {
       key: "type",
-      header: "Type",
+      header: text("النوع", "Type"),
       render: (item) => (
         <Badge className={cn("text-xs", getStatusColor(item.type))}>
           {getStatusLabel(item.type)}
@@ -93,7 +95,7 @@ export function AssessmentList() {
     },
     {
       key: "score",
-      header: "Score",
+      header: text("الدرجة", "Score"),
       render: (item) => {
         const score = toNumber(item.score);
         const maxScore = toNumber(item.maxScore);
@@ -103,17 +105,17 @@ export function AssessmentList() {
     },
     {
       key: "percentage",
-      header: "Percentage",
+      header: text("النسبة", "Percentage"),
       render: (item) => formatPercentage(toNumber(item.percentage)),
     },
     {
       key: "assessmentDate",
-      header: "Date",
+      header: text("التاريخ", "Date"),
       render: (item) => formatDate(item.assessmentDate),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: text("الإجراءات", "Actions"),
       render: (item) => (
         <div className="flex items-center gap-1">
           {canCreateOrEdit && (
@@ -158,7 +160,7 @@ export function AssessmentList() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search assessments..."
+        searchPlaceholder={text("ابحث عن تقييم...", "Search assessments...")}
         actions={
           canCreateOrEdit ? (
             <Button
@@ -166,9 +168,10 @@ export function AssessmentList() {
                 setEditingAssessment(null);
                 setFormOpen(true);
               }}
+              className="gap-2"
             >
-              <Plus className="ml-2 h-4 w-4" />
-              Add Assessment
+              <Plus className="h-4 w-4" />
+              {text("إضافة تقييم", "Add Assessment")}
             </Button>
           ) : null
         }
@@ -185,8 +188,8 @@ export function AssessmentList() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Assessment"
-        description="Are you sure you want to delete this assessment?"
+        title={text("حذف التقييم", "Delete Assessment")}
+        description={text("هل أنت متأكد من حذف هذا التقييم؟", "Are you sure you want to delete this assessment?")}
         onConfirm={() => {
           if (deletingId) {
             deleteAssessment.mutate(deletingId, {
@@ -195,7 +198,7 @@ export function AssessmentList() {
           }
         }}
         isLoading={deleteAssessment.isPending}
-        confirmText="Delete"
+        confirmText={text("حذف", "Delete")}
       />
     </>
   );

@@ -1,11 +1,12 @@
 import { format, parseISO, isValid } from 'date-fns';
-import { ar } from 'date-fns/locale';
+import { ar, enUS } from 'date-fns/locale';
+import { isArabic, localize } from '@/i18n/localize';
 
 export function formatDate(dateStr: string, formatStr: string = 'dd/MM/yyyy'): string {
   try {
     const date = parseISO(dateStr);
     if (!isValid(date)) return dateStr;
-    return format(date, formatStr, { locale: ar });
+    return format(date, formatStr, { locale: isArabic() ? ar : enUS });
   } catch {
     return dateStr;
   }
@@ -16,10 +17,7 @@ export function formatDateTime(dateStr: string): string {
 }
 
 export function formatCurrency(amount: number): string {
-
-  console.log("amount :", amount);
-  
-  return new Intl.NumberFormat('ar-SA', {
+  return new Intl.NumberFormat(isArabic() ? 'ar-SA' : 'en-US', {
     style: 'currency',
     currency: 'SAR',
     minimumFractionDigits: 0,
@@ -27,7 +25,7 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('ar-SA').format(num);
+  return new Intl.NumberFormat(isArabic() ? 'ar-SA' : 'en-US').format(num);
 }
 
 export function formatPercentage(value?: number | null): string {
@@ -57,47 +55,53 @@ export function getStatusColor(status: string): string {
 }
 
 export function getStatusLabel(status: string): string {
-  const labels: Record<string, string> = {
-    active: 'نشط',
-    inactive: 'غير نشط',
-    graduated: 'تخرج',
-    withdrawn: 'منسحب',
-    on_leave: 'في إجازة',
-    terminated: 'منتهي',
-    present: 'حاضر',
-    absent: 'غائب',
-    late: 'متأخر',
-    excused: 'معذور',
-    paid: 'مدفوع',
-    pending: 'معلق',
-    overdue: 'متأخر',
-    cancelled: 'ملغي',
-    completed: 'مكتمل',
-    failed: 'فشل',
-    male: 'ذكر',
-    female: 'أنثى',
-    quiz: 'اختبار قصير',
-    midterm: 'اختبار نصفي',
-    final: 'اختبار نهائي',
-    assignment: 'واجب',
-    project: 'مشروع',
-    salary: 'رواتب',
-    maintenance: 'صيانة',
-    supplies: 'مستلزمات',
-    utilities: 'مرافق',
-    other: 'أخرى',
-    info: 'معلومات',
-    warning: 'تحذير',
-    alert: 'تنبيه',
-    success: 'نجاح',
-    admin: 'مدير',
-    teacher: 'معلم',
-    student: 'طالب',
-    parent: 'ولي أمر',
-    reception: 'استقبال',
-    attendance: 'حضور',
-    financial: 'مالي',
-    performance: 'أداء',
+  const labels: Record<string, { ar: string; en: string }> = {
+    active: { ar: 'نشط', en: 'Active' },
+    inactive: { ar: 'غير نشط', en: 'Inactive' },
+    graduated: { ar: 'متخرج', en: 'Graduated' },
+    withdrawn: { ar: 'منسحب', en: 'Withdrawn' },
+    on_leave: { ar: 'في إجازة', en: 'On Leave' },
+    terminated: { ar: 'منتهي', en: 'Terminated' },
+    present: { ar: 'حاضر', en: 'Present' },
+    absent: { ar: 'غائب', en: 'Absent' },
+    late: { ar: 'متأخر', en: 'Late' },
+    excused: { ar: 'معذور', en: 'Excused' },
+    paid: { ar: 'مدفوع', en: 'Paid' },
+    pending: { ar: 'معلق', en: 'Pending' },
+    overdue: { ar: 'متأخر', en: 'Overdue' },
+    cancelled: { ar: 'ملغي', en: 'Cancelled' },
+    completed: { ar: 'مكتمل', en: 'Completed' },
+    failed: { ar: 'فشل', en: 'Failed' },
+    male: { ar: 'ذكر', en: 'Male' },
+    female: { ar: 'أنثى', en: 'Female' },
+    quiz: { ar: 'اختبار قصير', en: 'Quiz' },
+    midterm: { ar: 'اختبار نصفي', en: 'Midterm' },
+    final: { ar: 'اختبار نهائي', en: 'Final' },
+    exam: { ar: 'اختبار', en: 'Exam' },
+    homework: { ar: 'واجب', en: 'Homework' },
+    assignment: { ar: 'واجب', en: 'Assignment' },
+    project: { ar: 'مشروع', en: 'Project' },
+    salary: { ar: 'رواتب', en: 'Salary' },
+    maintenance: { ar: 'صيانة', en: 'Maintenance' },
+    supplies: { ar: 'مستلزمات', en: 'Supplies' },
+    utilities: { ar: 'مرافق', en: 'Utilities' },
+    other: { ar: 'أخرى', en: 'Other' },
+    info: { ar: 'معلومات', en: 'Info' },
+    warning: { ar: 'تحذير', en: 'Warning' },
+    alert: { ar: 'تنبيه', en: 'Alert' },
+    success: { ar: 'نجاح', en: 'Success' },
+    admin: { ar: 'مدير', en: 'Admin' },
+    teacher: { ar: 'معلم', en: 'Teacher' },
+    student: { ar: 'طالب', en: 'Student' },
+    parent: { ar: 'ولي أمر', en: 'Parent' },
+    reception: { ar: 'استقبال', en: 'Reception' },
+    attendance: { ar: 'حضور', en: 'Attendance' },
+    financial: { ar: 'مالي', en: 'Financial' },
+    performance: { ar: 'أداء', en: 'Performance' },
+    partial: { ar: 'جزئي', en: 'Partial' },
+    scheduled: { ar: 'مجدولة', en: 'Scheduled' },
   };
-  return labels[status] || status;
+  const label = labels[status];
+  if (!label) return status;
+  return localize(label.ar, label.en);
 }

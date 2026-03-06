@@ -2,6 +2,7 @@ import { useDashboardStats } from '@/hooks/api/useDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { Badge } from '@/components/ui/badge';
+import { useLocale } from '@/hooks/useLocale';
 import { formatCurrency, formatDateTime } from '@/utils/formatters';
 
 const formatStudentName = (firstName: string, lastName: string): string => {
@@ -10,6 +11,7 @@ const formatStudentName = (firstName: string, lastName: string): string => {
 };
 
 export function RecentActivities() {
+  const { text } = useLocale();
   const { data: stats, isLoading } = useDashboardStats();
 
   if (isLoading) return <LoadingSpinner />;
@@ -18,14 +20,14 @@ export function RecentActivities() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Payments</CardTitle>
+        <CardTitle>{text('أحدث المدفوعات', 'Recent Payments')}</CardTitle>
       </CardHeader>
 
       <CardContent>
         <div className="space-y-3">
           {stats.recentPayments.length === 0 ? (
             <p className="py-4 text-center text-muted-foreground">
-              No recent payments found.
+              {text('لا توجد مدفوعات حديثة.', 'No recent payments found.')}
             </p>
           ) : (
             stats.recentPayments.map((payment) => (
@@ -44,7 +46,7 @@ export function RecentActivities() {
                     {formatDateTime(payment.paymentDate ?? payment.createdAt)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Receipt: {payment.receiptNumber || '-'}
+                    {text('رقم الإيصال', 'Receipt')}: {payment.receiptNumber || '-'}
                   </p>
                 </div>
 

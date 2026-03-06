@@ -23,6 +23,7 @@ import { Course } from '@/types/course.types';
 import { GradeSubject } from '@/types/grade-subject.types';
 import { formatDate } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2, Link2, Loader2 } from 'lucide-react';
 import { CourseForm } from '@/components/courses/CourseForm';
 import { toast } from 'sonner';
@@ -35,6 +36,8 @@ type GradeSubjectWithRelations = GradeSubject & {
 };
 
 export default function CoursesPage() {
+  const { text } = useLocale();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -189,7 +192,7 @@ export default function CoursesPage() {
     const sectionId = selectedSection?.id;
 
     if (!gradeId || !subjectId || !teacherId || !sectionId) {
-      toast.error('Please select grade, section, subject, and teacher.');
+      toast.error(text('يرجى اختيار الصف والشعبة والمادة والمعلم.', 'Please select grade, section, subject, and teacher.'));
       return;
     }
 
@@ -197,7 +200,7 @@ export default function CoursesPage() {
       (item) => item.gradeId === gradeId && item.subjectId === subjectId && item.sectionId === sectionId
     );
     if (exists) {
-      toast.error('This subject is already linked to the selected grade.');
+      toast.error(text('هذه المادة مرتبطة بالفعل بالصف المختار.', 'This subject is already linked to the selected grade.'));
       return;
     }
 
@@ -219,20 +222,20 @@ export default function CoursesPage() {
 
   const courseColumns: Column<Course>[] = [
     { key: 'id', header: '#' },
-    { key: 'name', header: 'Subject Name' },
+    { key: 'name', header: text('اسم المادة', 'Subject Name') },
     {
       key: 'description',
-      header: 'Description',
+      header: text('الوصف', 'Description'),
       render: (c) => c.description || '-',
     },
     {
       key: 'createdAt',
-      header: 'Created At',
+      header: text('تاريخ الإنشاء', 'Created At'),
       render: (c) => formatDate(c.createdAt),
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: text('الإجراءات', 'Actions'),
       render: (c) => (
         <div className="flex items-center gap-1">
           <Button
@@ -257,32 +260,32 @@ export default function CoursesPage() {
     { key: 'id', header: '#' },
     {
       key: 'gradeId',
-      header: 'Grade',
+      header: text('الصف', 'Grade'),
       render: (item) => getGradeName(item),
     },
     {
       key: 'subjectId',
-      header: 'Subject',
+      header: text('المادة', 'Subject'),
       render: (item) => getSubjectName(item),
     },
     {
       key: 'teacherId',
-      header: 'Teacher',
+      header: text('المعلم', 'Teacher'),
       render: (item) => getTeacherName(item),
     },
     {
       key: 'sectionId',
-      header: 'Section',
+      header: text('الشعبة', 'Section'),
       render: (item) => getSectionName(item),
     },
     {
       key: 'createdAt',
-      header: 'Created At',
+      header: text('تاريخ الإنشاء', 'Created At'),
       render: (item) => formatDate(item.createdAt),
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: text('الإجراءات', 'Actions'),
       render: (item) => (
         <Button variant="ghost" size="icon" onClick={() => setDeletingGradeSubjectId(item.id)}>
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -294,7 +297,7 @@ export default function CoursesPage() {
   return (
     <div className="space-y-8">
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Subjects (مواد)</h1>
+        <h1 className="text-2xl font-bold">{text('إدارة المواد', 'Subject Management')}</h1>
         <DataTable
           columns={courseColumns}
           data={data?.data || []}
@@ -308,16 +311,17 @@ export default function CoursesPage() {
           onPageChange={setPage}
           searchValue={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search subject..."
+          searchPlaceholder={text('ابحث عن مادة...', 'Search subject...')}
           actions={
             <Button
               onClick={() => {
                 setEditingCourse(null);
                 setFormOpen(true);
               }}
+              className="gap-2"
             >
-              <Plus className="ml-2 h-4 w-4" />
-              Add Subject
+              <Plus className="h-4 w-4" />
+              {text('إضافة مادة', 'Add Subject')}
             </Button>
           }
         />
@@ -326,15 +330,18 @@ export default function CoursesPage() {
       <div className="space-y-4 rounded-md border p-4">
         <div className="flex items-center gap-2">
           <Link2 className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">Grade-Subject Relation (grade_subject)</h2>
+          <h2 className="text-xl font-semibold">{text('ربط الصفوف بالمواد (grade_subject)', 'Grade-Subject Relation (grade_subject)')}</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Each row links one subject to one grade and one section, with required teacher.
+          {text(
+            'كل سطر يربط مادة بصف وشعبة ومعلم.',
+            'Each row links one subject to one grade and one section, with required teacher.'
+          )}
         </p>
 
         <div className="grid gap-3 md:grid-cols-4 md:items-end">
           <SearchSelect
-            label="Grade (الصف)"
+            label={text("الصف", "Grade")}
             query={gradeQuery}
             setQuery={setGradeQuery}
             results={gradeResults}
@@ -347,7 +354,7 @@ export default function CoursesPage() {
           />
 
           <SearchSelect
-            label="Subject (مواد)"
+            label={text("المادة", "Subject")}
             query={subjectQuery}
             setQuery={setSubjectQuery}
             results={subjectResults}
@@ -360,7 +367,7 @@ export default function CoursesPage() {
           />
 
           <SearchSelect
-            label="Teacher"
+            label={text("المعلم", "Teacher")}
             query={teacherQuery}
             setQuery={setTeacherQuery}
             results={teacherResults}
@@ -373,8 +380,8 @@ export default function CoursesPage() {
           />
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Section <span className="text-red-500">*</span>
+            <label className="mb-2 block text-sm font-medium text-foreground">
+              {text('الشعبة', 'Section')} <span className="text-destructive">*</span>
             </label>
             <Select
               value={selectedSection ? String(selectedSection.id) : undefined}
@@ -389,10 +396,10 @@ export default function CoursesPage() {
                 <SelectValue
                   placeholder={
                     !selectedGrade
-                      ? "Select grade first"
+                      ? text('اختر الصف أولاً', 'Select grade first')
                       : sections.length === 0
-                        ? "No sections for selected grade"
-                        : "Select section"
+                        ? text('لا توجد شعب للصف المحدد', 'No sections for selected grade')
+                        : text('اختر الشعبة', 'Select section')
                   }
                 />
               </SelectTrigger>
@@ -420,7 +427,7 @@ export default function CoursesPage() {
           className="w-full md:w-auto"
         >
           {createGradeSubject.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Add Link
+          {text('إضافة الربط', 'Add Link')}
         </Button>
 
         <DataTable
@@ -437,22 +444,22 @@ export default function CoursesPage() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Subject"
-        description="Are you sure you want to delete this subject?"
+        title={text('حذف المادة', 'Delete Subject')}
+        description={text('هل أنت متأكد من حذف هذه المادة؟', 'Are you sure you want to delete this subject?')}
         onConfirm={() => {
           if (deletingId) {
             deleteCourse.mutate(deletingId, { onSuccess: () => setDeletingId(null) });
           }
         }}
         isLoading={deleteCourse.isPending}
-        confirmText="Delete"
+        confirmText={text('حذف', 'Delete')}
       />
 
       <ConfirmDialog
         open={!!deletingGradeSubjectId}
         onOpenChange={(open) => !open && setDeletingGradeSubjectId(null)}
-        title="Delete Grade-Subject Link"
-        description="Are you sure you want to delete this subject-grade relation?"
+        title={text('حذف ربط الصف والمادة', 'Delete Grade-Subject Link')}
+        description={text('هل أنت متأكد من حذف هذا الربط؟', 'Are you sure you want to delete this subject-grade relation?')}
         onConfirm={() => {
           if (deletingGradeSubjectId) {
             deleteGradeSubject.mutate(deletingGradeSubjectId, {
@@ -461,7 +468,7 @@ export default function CoursesPage() {
           }
         }}
         isLoading={deleteGradeSubject.isPending}
-        confirmText="Delete"
+        confirmText={text('حذف', 'Delete')}
       />
     </div>
   );

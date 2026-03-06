@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { expenseService } from '@/services/expense.service';
 import { PaginationParams } from '@/types/common.types';
 import { CreateExpenseData, UpdateExpenseData } from '@/types/expense.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const expenseKeys = {
@@ -42,10 +43,10 @@ export const useCreateExpense = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: expenseKeys.stats() });
-      toast.success('تم إضافة المصروف بنجاح');
+      toast.success(localize('تم إضافة المصروف بنجاح', 'Expense created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -59,10 +60,10 @@ export const useUpdateExpense = () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: expenseKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: expenseKeys.stats() });
-      toast.success('تم تحديث المصروف بنجاح');
+      toast.success(localize('تم تحديث المصروف بنجاح', 'Expense updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -74,10 +75,10 @@ export const useDeleteExpense = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: expenseKeys.lists() });
       queryClient.invalidateQueries({ queryKey: expenseKeys.stats() });
-      toast.success('تم حذف المصروف بنجاح');
+      toast.success(localize('تم حذف المصروف بنجاح', 'Expense deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

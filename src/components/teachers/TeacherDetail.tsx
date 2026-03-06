@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ErrorMessage } from '@/components/common/ErrorMessage';
 import { formatDate, formatCurrency, getStatusColor, getStatusLabel } from '@/utils/formatters';
+import { useLocale } from '@/hooks/useLocale';
 import { cn } from '@/lib/utils';
 
 interface TeacherDetailProps {
@@ -11,18 +12,16 @@ interface TeacherDetailProps {
 }
 
 export function TeacherDetail({ teacherId }: TeacherDetailProps) {
+  const { text } = useLocale();
   const { data: teacher, isLoading, isError, refetch } = useTeacher(teacherId);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError || !teacher) return <ErrorMessage onRetry={() => refetch()} />;
 
-  console.log(teacher.salary);
-  
-
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className="flex flex-wrap items-center justify-between gap-2">
           <span>
             {teacher.firstName} {teacher.lastName}
           </span>
@@ -30,32 +29,32 @@ export function TeacherDetail({ teacherId }: TeacherDetailProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
           <div>
-            <p className="text-muted-foreground">التخصص</p>
+            <p className="text-muted-foreground">{text('التخصص', 'Specialization')}</p>
             <p className="font-medium">{teacher.specialization}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">المؤهلات</p>
+            <p className="text-muted-foreground">{text('المؤهلات', 'Qualifications')}</p>
             <p className="font-medium">{teacher.qualifications || '-'}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">سنوات الخبرة</p>
+            <p className="text-muted-foreground">{text('سنوات الخبرة', 'Experience Years')}</p>
             <p className="font-medium">{teacher.experienceYears ?? '-'}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">الراتب</p>
+            <p className="text-muted-foreground">{text('الراتب', 'Salary')}</p>
             <p className="font-medium">
-              { teacher.salary ?? '-'}
+              {typeof teacher.salary === 'number' ? formatCurrency(teacher.salary) : '-'}
             </p>
           </div>
           <div>
-            <p className="text-muted-foreground">تاريخ التوظيف</p>
+            <p className="text-muted-foreground">{text('تاريخ التوظيف', 'Hire Date')}</p>
             <p className="font-medium">{teacher.hireDate ? formatDate(teacher.hireDate) : '-'}</p>
           </div>
           {teacher.bio && (
             <div className="col-span-2">
-              <p className="text-muted-foreground">السيرة الذاتية</p>
+              <p className="text-muted-foreground">{text('السيرة الذاتية', 'Bio')}</p>
               <p className="font-medium">{teacher.bio}</p>
             </div>
           )}

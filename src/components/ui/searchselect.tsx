@@ -1,4 +1,7 @@
 // src/component/ui/searchselect
+import { useLocale } from "@/hooks/useLocale";
+import { Input } from "@/components/ui/input";
+
 export function SearchSelect({
   label,
   query,
@@ -22,6 +25,8 @@ export function SearchSelect({
   display: (item: any) => string;
   required?: boolean;
 }) {
+  const { text } = useLocale();
+
   const getItemLabel = (item: any): string => {
     const directName =
       typeof item?.name === "string"
@@ -40,20 +45,20 @@ export function SearchSelect({
 
   return (
     <div className="relative">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="mb-2 block text-sm font-medium text-foreground">
+        {label} {required && <span className="text-destructive">*</span>}
       </label>
 
-      <input
+      <Input
         type="text"
         value={query ?? ""}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={`Search ${label}...`}
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+        placeholder={text(`Search ${label}...`, `Search ${label}...`)}
+        className="h-10 px-4 py-2.5"
       />
 
       {results.length > 0 && (
-        <ul className="absolute z-10 bg-white border border-gray-200 mt-2 w-full rounded-lg shadow-lg max-h-48 overflow-auto">
+        <ul className="absolute z-20 mt-2 max-h-48 w-full overflow-auto rounded-lg border border-[hsl(var(--field-border))] bg-card shadow-[0_18px_40px_-24px_hsl(var(--field-shadow)),0_8px_18px_-14px_hsl(var(--field-shadow))]">
           {results.map((r) => (
             <li
               key={r.id}
@@ -64,7 +69,7 @@ export function SearchSelect({
                 setResults([]);
                 setValue(r.id);
               }}
-              className="px-4 py-2.5 text-sm hover:bg-blue-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0"
+              className="cursor-pointer border-b border-border/50 px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-accent/60 last:border-b-0"
             >
               {display(r)}
             </li>
@@ -73,8 +78,8 @@ export function SearchSelect({
       )}
 
       {selected && (
-        <p className="text-xs text-green-600 mt-2 font-medium">
-          Selected {label}: {selected.name} (ID: {selected.id})
+        <p className="mt-2 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          {text("Selected", "Selected")} {label}: {selected.name} (ID: {selected.id})
         </p>
       )}
     </div>

@@ -6,15 +6,18 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { Grade } from '@/types/grade.types';
 import { formatDate } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { GradeForm } from '@/components/grades/GradeForm';
 
-const gradeLevelLabel: Record<Grade['level'], string> = {
-  preparatory: 'Preparatory',
-  secondary: 'Secondary',
-};
-
 export default function GradesPage() {
+  const { text } = useLocale();
+
+  const gradeLevelLabel: Record<Grade['level'], string> = {
+    preparatory: text('إعدادي', 'Preparatory'),
+    secondary: text('ثانوي', 'Secondary'),
+  };
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -32,25 +35,25 @@ export default function GradesPage() {
 
   const columns: Column<Grade>[] = [
     { key: 'id', header: '#' },
-    { key: 'name', header: 'Class Name' },
+    { key: 'name', header: text('اسم الصف', 'Class Name') },
     {
       key: 'level',
-      header: 'Level',
+      header: text('المستوى', 'Level'),
       render: (g) => gradeLevelLabel[g.level],
     },
     {
       key: 'description',
-      header: 'Description',
+      header: text('الوصف', 'Description'),
       render: (g) => g.description || '-',
     },
     {
       key: 'createdAt',
-      header: 'Created At',
+      header: text('تاريخ الإنشاء', 'Created At'),
       render: (g) => formatDate(g.createdAt),
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: text('الإجراءات', 'Actions'),
       render: (g) => (
         <div className="flex items-center gap-1">
           <Button
@@ -73,7 +76,7 @@ export default function GradesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Class Management (الصفوف)</h1>
+      <h1 className="text-2xl font-bold">{text('إدارة الصفوف', 'Class Management')}</h1>
       <DataTable
         columns={columns}
         data={data?.data || []}
@@ -87,16 +90,17 @@ export default function GradesPage() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search class..."
+        searchPlaceholder={text('ابحث عن صف...', 'Search class...')}
         actions={
           <Button
             onClick={() => {
               setEditingGrade(null);
               setFormOpen(true);
             }}
+            className="gap-2"
           >
-            <Plus className="ml-2 h-4 w-4" />
-            Add Class
+            <Plus className="h-4 w-4" />
+            {text('إضافة صف', 'Add Class')}
           </Button>
         }
       />
@@ -106,13 +110,13 @@ export default function GradesPage() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Class"
-        description="Are you sure you want to delete this class?"
+        title={text('حذف الصف', 'Delete Class')}
+        description={text('هل أنت متأكد من حذف هذا الصف؟', 'Are you sure you want to delete this class?')}
         onConfirm={() => {
           if (deletingId) deleteGrade.mutate(deletingId, { onSuccess: () => setDeletingId(null) });
         }}
         isLoading={deleteGrade.isPending}
-        confirmText="Delete"
+        confirmText={text('حذف', 'Delete')}
       />
     </div>
   );

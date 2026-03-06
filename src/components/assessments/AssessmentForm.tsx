@@ -26,6 +26,7 @@ import {
 } from "@/hooks/api/useAssessments";
 import { useStudents } from "@/hooks/api/useStudents";
 import { useGradeSubjects } from "@/hooks/api/useGradeSubjects";
+import { useLocale } from "@/hooks/useLocale";
 import { Assessment } from "@/types/assessment.types";
 import { GradeSubject } from "@/types/grade-subject.types";
 import { Loader2 } from "lucide-react";
@@ -91,6 +92,7 @@ export function AssessmentForm({
   onOpenChange,
   assessment,
 }: AssessmentFormProps) {
+  const { text } = useLocale();
   const createAssessment = useCreateAssessment();
   const updateAssessment = useUpdateAssessment();
   const isEditing = !!assessment;
@@ -171,14 +173,14 @@ export function AssessmentForm({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? "Edit Assessment" : "Add Assessment"}
+            {isEditing ? text("تعديل التقييم", "Edit Assessment") : text("إضافة تقييم", "Add Assessment")}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Student *</Label>
+              <Label>{text("الطالب", "Student")} *</Label>
               <Select
                 value={
                   watch("studentId") ? String(watch("studentId")) : undefined
@@ -191,8 +193,8 @@ export function AssessmentForm({
                   <SelectValue
                     placeholder={
                       isStudentsLoading
-                        ? "Loading students..."
-                        : "Select student"
+                        ? text("جاري تحميل الطلاب...", "Loading students...")
+                        : text("اختر الطالب", "Select student")
                     }
                   />
                 </SelectTrigger>
@@ -212,7 +214,7 @@ export function AssessmentForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Grade Subject *</Label>
+              <Label>{text("مادة الصف", "Grade Subject")} *</Label>
               <Select
                 value={
                   watch("gradeSubjectId")
@@ -229,8 +231,8 @@ export function AssessmentForm({
                   <SelectValue
                     placeholder={
                       isGradeSubjectsLoading
-                        ? "Loading grade subjects..."
-                        : "Select grade subject"
+                        ? text("جاري تحميل مواد الصف...", "Loading grade subjects...")
+                        : text("اختر مادة الصف", "Select grade subject")
                     }
                   />
                 </SelectTrigger>
@@ -258,7 +260,7 @@ export function AssessmentForm({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Type *</Label>
+              <Label>{text("النوع", "Type")} *</Label>
               <Select
                 value={watch("type")}
                 onValueChange={(val) =>
@@ -271,11 +273,11 @@ export function AssessmentForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="quiz">Quiz</SelectItem>
-                  <SelectItem value="exam">Exam</SelectItem>
-                  <SelectItem value="homework">Homework</SelectItem>
-                  <SelectItem value="midterm">Midterm</SelectItem>
-                  <SelectItem value="final">Final</SelectItem>
+                  <SelectItem value="quiz">{text("اختبار قصير", "Quiz")}</SelectItem>
+                  <SelectItem value="exam">{text("اختبار", "Exam")}</SelectItem>
+                  <SelectItem value="homework">{text("واجب", "Homework")}</SelectItem>
+                  <SelectItem value="midterm">{text("اختبار نصفي", "Midterm")}</SelectItem>
+                  <SelectItem value="final">{text("اختبار نهائي", "Final")}</SelectItem>
                 </SelectContent>
               </Select>
               {errors.type && (
@@ -286,7 +288,7 @@ export function AssessmentForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Date *</Label>
+              <Label>{text("التاريخ", "Date")} *</Label>
               <Input type="date" {...register("assessmentDate")} />
               {errors.assessmentDate && (
                 <p className="text-sm text-destructive">
@@ -297,8 +299,8 @@ export function AssessmentForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Title *</Label>
-            <Input {...register("title")} placeholder="First Term Exam" />
+            <Label>{text("العنوان", "Title")} *</Label>
+            <Input {...register("title")} placeholder={text("اختبار الفصل الأول", "First Term Exam")} />
             {errors.title && (
               <p className="text-sm text-destructive">{errors.title.message}</p>
             )}
@@ -306,7 +308,7 @@ export function AssessmentForm({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>Max Score *</Label>
+              <Label>{text("الدرجة العظمى", "Max Score")} *</Label>
               <Input
                 type="number"
                 min={1}
@@ -323,7 +325,7 @@ export function AssessmentForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Score</Label>
+              <Label>{text("الدرجة", "Score")}</Label>
               <Input
                 type="number"
                 min={0}
@@ -342,7 +344,7 @@ export function AssessmentForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Feedback</Label>
+            <Label>{text("الملاحظات", "Feedback")}</Label>
             <Textarea {...register("feedback")} rows={3} />
           </div>
 
@@ -352,11 +354,11 @@ export function AssessmentForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? text("تحديث", "Update") : text("إنشاء", "Create")}
             </Button>
           </DialogFooter>
         </form>

@@ -5,6 +5,7 @@ import {
   CreateNotificationData,
   BulkNotificationData,
 } from '@/types/notification.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const notificationKeys = {
@@ -46,10 +47,10 @@ export const useCreateNotification = () => {
       notificationService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-      toast.success('تم إرسال الإشعار بنجاح');
+      toast.success(localize('تم إرسال الإشعار بنجاح', 'Notification sent successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -61,10 +62,10 @@ export const useSendBulkNotification = () => {
       notificationService.sendBulk(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.lists() });
-      toast.success('تم إرسال الإشعارات بنجاح');
+      toast.success(localize('تم إرسال الإشعارات بنجاح', 'Notifications sent successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -85,7 +86,7 @@ export const useMarkAllRead = () => {
     mutationFn: () => notificationService.markAllRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationKeys.all });
-      toast.success('تم تعليم جميع الإشعارات كمقروءة');
+      toast.success(localize('تم تعليم جميع الإشعارات كمقروءة', 'All notifications marked as read'));
     },
   });
 };

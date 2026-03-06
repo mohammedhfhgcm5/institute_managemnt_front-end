@@ -7,11 +7,14 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { Student } from '@/types/student.types';
 import { formatDate, getStatusColor, getStatusLabel } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { StudentForm } from './StudentForm';
 
 export function StudentList() {
+  const { text } = useLocale();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -44,27 +47,27 @@ export function StudentList() {
     { key: 'id', header: '#' },
     {
       key: 'name',
-      header: 'الاسم',
+      header: text('الاسم', 'Name'),
       render: (student) => `${student.firstName} ${student.lastName}`,
     },
     {
       key: 'academicYear',
-      header: 'السنة الدراسية',
+      header: text('السنة الدراسية', 'Academic Year'),
       render: (student) => student.academicYear || '-',
     },
     {
       key: 'gender',
-      header: 'الجنس',
+      header: text('الجنس', 'Gender'),
       render: (student) => getStatusLabel(student.gender),
     },
     {
       key: 'registrationDate',
-      header: 'تاريخ التسجيل',
+      header: text('تاريخ التسجيل', 'Registration Date'),
       render: (student) => formatDate(student.registrationDate),
     },
     {
       key: 'status',
-      header: 'الحالة',
+      header: text('الحالة', 'Status'),
       render: (student) => (
         <Badge className={cn('text-xs', getStatusColor(student.status))}>
           {getStatusLabel(student.status)}
@@ -73,7 +76,7 @@ export function StudentList() {
     },
     {
       key: 'actions',
-      header: 'الإجراءات',
+      header: text('الإجراءات', 'Actions'),
       render: (student) => (
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={() => handleEdit(student)}>
@@ -102,11 +105,11 @@ export function StudentList() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="ابحث عن الطلاب..."
+        searchPlaceholder={text('ابحث عن الطلاب...', 'Search students...')}
         actions={
-          <Button onClick={() => { setEditingStudent(null); setFormOpen(true); }}>
-            <Plus className="ml-2 h-4 w-4" />
-            إضافة طالب
+          <Button onClick={() => { setEditingStudent(null); setFormOpen(true); }} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {text('إضافة طالب', 'Add Student')}
           </Button>
         }
       />
@@ -116,11 +119,11 @@ export function StudentList() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="حذف الطالب"
-        description="هل أنت متأكد من حذف هذا الطالب؟ لا يمكن التراجع عن هذا الإجراء."
+        title={text('حذف الطالب', 'Delete Student')}
+        description={text('هل أنت متأكد من حذف هذا الطالب؟ لا يمكن التراجع عن هذا الإجراء.', 'Are you sure you want to delete this student? This action cannot be undone.')}
         onConfirm={handleDelete}
         isLoading={deleteStudent.isPending}
-        confirmText="حذف"
+        confirmText={text('حذف', 'Delete')}
       />
     </>
   );

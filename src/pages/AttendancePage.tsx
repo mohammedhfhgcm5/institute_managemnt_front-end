@@ -37,6 +37,7 @@ import { formatDate, getStatusColor, getStatusLabel } from "@/utils/formatters";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/hooks/useLocale";
 import { Grade } from "@/types/grade.types";
 import { Section } from "@/types/section.types";
 import { Schedule } from "@/types/schedule.types";
@@ -68,6 +69,7 @@ const formatScheduleTime = (timeValue: string) => {
 };
 
 export default function AttendancePage() {
+  const { text } = useLocale();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -182,22 +184,22 @@ export default function AttendancePage() {
 
   const handleSubmitBulkAttendance = () => {
     if (!selectedSectionId) {
-      toast.error("Please choose a section first");
+      toast.error(text("يرجى اختيار الشعبة أولاً", "Please choose a section first"));
       return;
     }
 
     if (!selectedScheduleId) {
-      toast.error("Please choose a schedule");
+      toast.error(text("يرجى اختيار الحصة أولاً", "Please choose a schedule"));
       return;
     }
 
     if (!attendanceDate) {
-      toast.error("Please choose attendance date");
+      toast.error(text("يرجى اختيار تاريخ الحضور", "Please choose attendance date"));
       return;
     }
 
     if (students.length === 0) {
-      toast.error("No students found for this section");
+      toast.error(text("لا يوجد طلاب لهذه الشعبة", "No students found for this section"));
       return;
     }
 
@@ -236,7 +238,7 @@ export default function AttendancePage() {
     { key: "id", header: "#" },
     {
       key: "student",
-      header: "Student",
+      header: text("الطالب", "Student"),
       render: (record) =>
         record.student
           ? `${record.student.firstName} ${record.student.lastName}`
@@ -244,7 +246,7 @@ export default function AttendancePage() {
     },
     {
       key: "schedule",
-      header: "Schedule",
+      header: text("الحصة", "Schedule"),
       render: (record) => {
         const sectionName = record.schedule?.section?.name;
         const subjectName = record.schedule?.gradeSubject?.subject?.name;
@@ -255,12 +257,12 @@ export default function AttendancePage() {
     },
     {
       key: "date",
-      header: "Date",
+      header: text("التاريخ", "Date"),
       render: (record) => formatDate(record.date),
     },
     {
       key: "status",
-      header: "Status",
+      header: text("الحالة", "Status"),
       render: (record) => (
         <Badge className={cn("text-xs", getStatusColor(record.status))}>
           {getStatusLabel(record.status)}
@@ -269,12 +271,12 @@ export default function AttendancePage() {
     },
     {
       key: "notes",
-      header: "Notes",
+      header: text("الملاحظات", "Notes"),
       render: (record) => record.notes || "-",
     },
     {
       key: "actions",
-      header: "Actions",
+      header: text("الإجراءات", "Actions"),
       render: (record) => (
         <div className="flex items-center gap-1">
           <Button
@@ -284,7 +286,7 @@ export default function AttendancePage() {
               setEditingRecord(record);
               setFormOpen(true);
             }}
-            title="Edit attendance"
+            title={text("تعديل الحضور", "Edit attendance")}
           >
             <Edit className="h-4 w-4" />
           </Button>
@@ -292,7 +294,7 @@ export default function AttendancePage() {
             variant="ghost"
             size="icon"
             onClick={() => setDeletingId(record.id)}
-            title="Delete attendance"
+            title={text("حذف الحضور", "Delete attendance")}
           >
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
@@ -303,19 +305,22 @@ export default function AttendancePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Attendance Management</h1>
+      <h1 className="text-2xl font-bold">{text("إدارة الحضور", "Attendance Management")}</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Bulk Attendance</CardTitle>
+          <CardTitle className="text-xl">{text("تسجيل حضور جماعي", "Bulk Attendance")}</CardTitle>
           <CardDescription>
-            Select section and schedule, then submit attendance for all students in one request.
+            {text(
+              "اختر الشعبة والحصة ثم أرسل حضور جميع الطلاب في طلب واحد.",
+              "Select section and schedule, then submit attendance for all students in one request."
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
             <div className="space-y-2">
-              <Label>Grade (الصف) *</Label>
+              <Label>{text("الصف", "Grade")} *</Label>
               <Select
                 value={selectedGradeId ? String(selectedGradeId) : undefined}
                 onValueChange={(value) => {
@@ -326,7 +331,11 @@ export default function AttendancePage() {
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={isGradesLoading ? "Loading grades..." : "Select grade"}
+                    placeholder={
+                      isGradesLoading
+                        ? text("جاري تحميل الصفوف...", "Loading grades...")
+                        : text("اختر الصف", "Select grade")
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -340,7 +349,7 @@ export default function AttendancePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Section *</Label>
+              <Label>{text("الشعبة", "Section")} *</Label>
               <Select
                 value={selectedSectionId ? String(selectedSectionId) : undefined}
                 onValueChange={(value) => {
@@ -353,10 +362,10 @@ export default function AttendancePage() {
                   <SelectValue
                     placeholder={
                       !selectedGradeId
-                        ? "Select grade first"
+                        ? text("اختر الصف أولاً", "Select grade first")
                         : isSectionsLoading
-                          ? "Loading sections..."
-                          : "Select section"
+                          ? text("جاري تحميل الشعب...", "Loading sections...")
+                          : text("اختر الشعبة", "Select section")
                     }
                   />
                 </SelectTrigger>
@@ -371,7 +380,7 @@ export default function AttendancePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Schedule *</Label>
+              <Label>{text("الحصة", "Schedule")} *</Label>
               <Select
                 value={selectedScheduleId ? String(selectedScheduleId) : undefined}
                 onValueChange={(value) => setSelectedScheduleId(Number(value))}
@@ -381,10 +390,10 @@ export default function AttendancePage() {
                   <SelectValue
                     placeholder={
                       !selectedSectionId
-                        ? "Choose section first"
+                        ? text("اختر الشعبة أولاً", "Choose section first")
                         : isSchedulesLoading
-                          ? "Loading schedules..."
-                          : "Select schedule"
+                          ? text("جاري تحميل الحصص...", "Loading schedules...")
+                          : text("اختر الحصة", "Select schedule")
                     }
                   />
                 </SelectTrigger>
@@ -399,7 +408,7 @@ export default function AttendancePage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Date *</Label>
+              <Label>{text("التاريخ", "Date")} *</Label>
               <Input
                 type="date"
                 value={attendanceDate}
@@ -412,43 +421,43 @@ export default function AttendancePage() {
             <>
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => applyStatusToAll("present")}>
-                  Mark All Present
+                  {text("تحديد الكل حاضر", "Mark All Present")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => applyStatusToAll("absent")}>
-                  Mark All Absent
+                  {text("تحديد الكل غائب", "Mark All Absent")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => applyStatusToAll("late")}>
-                  Mark All Late
+                  {text("تحديد الكل متأخر", "Mark All Late")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => applyStatusToAll("excused")}>
-                  Mark All Excused
+                  {text("تحديد الكل معذور", "Mark All Excused")}
                 </Button>
               </div>
 
               <div className="rounded-md border">
                 <div className="max-h-[420px] overflow-auto">
                   <table className="w-full min-w-[760px] text-sm">
-                    <thead className="bg-muted/40">
-                      <tr>
-                        <th className="px-3 py-2 text-left font-medium">Student</th>
-                        <th className="px-3 py-2 text-left font-medium">Status</th>
-                        <th className="px-3 py-2 text-left font-medium">Late Minutes</th>
-                        <th className="px-3 py-2 text-left font-medium">Notes</th>
-                      </tr>
-                    </thead>
+                      <thead className="bg-muted/40">
+                        <tr>
+                          <th className="px-3 py-2 text-left font-medium">{text("الطالب", "Student")}</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("الحالة", "Status")}</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("دقائق التأخير", "Late Minutes")}</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("الملاحظات", "Notes")}</th>
+                        </tr>
+                      </thead>
                     <tbody>
                       {isStudentsLoading ? (
-                        <tr>
-                          <td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">
-                            Loading students...
-                          </td>
-                        </tr>
-                      ) : students.length === 0 ? (
-                        <tr>
-                          <td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">
-                            No students found for the selected section
-                          </td>
-                        </tr>
+                          <tr>
+                            <td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">
+                              {text("جاري تحميل الطلاب...", "Loading students...")}
+                            </td>
+                          </tr>
+                        ) : students.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="px-3 py-6 text-center text-muted-foreground">
+                              {text("لا يوجد طلاب للشعبة المحددة", "No students found for the selected section")}
+                            </td>
+                          </tr>
                       ) : (
                         students.map((student) => {
                           const row = studentAttendanceMap[student.id] ?? {
@@ -507,7 +516,7 @@ export default function AttendancePage() {
                                       notes: event.target.value,
                                     })
                                   }
-                                  placeholder="Optional note"
+                                  placeholder={text("ملاحظة اختيارية", "Optional note")}
                                 />
                               </td>
                             </tr>
@@ -519,19 +528,19 @@ export default function AttendancePage() {
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleSubmitBulkAttendance}
+                <div className="flex justify-end">
+                  <Button
+                    onClick={handleSubmitBulkAttendance}
                   disabled={
                     bulkCreateAttendance.isPending ||
-                    !selectedScheduleId ||
-                    students.length === 0
-                  }
-                >
-                  Submit Bulk Attendance
-                </Button>
-              </div>
-            </>
+                      !selectedScheduleId ||
+                      students.length === 0
+                    }
+                  >
+                    {text("إرسال الحضور دفعة واحدة", "Submit Bulk Attendance")}
+                  </Button>
+                </div>
+              </>
           )}
         </CardContent>
       </Card>
@@ -549,7 +558,7 @@ export default function AttendancePage() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search attendance..."
+        searchPlaceholder={text("بحث في الحضور...", "Search attendance...")}
       />
 
       <AttendanceForm
@@ -566,8 +575,8 @@ export default function AttendancePage() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(nextOpen) => !nextOpen && setDeletingId(null)}
-        title="Delete Attendance Record"
-        description="Are you sure you want to delete this attendance record?"
+        title={text("حذف سجل الحضور", "Delete Attendance Record")}
+        description={text("هل أنت متأكد من حذف سجل الحضور هذا؟", "Are you sure you want to delete this attendance record?")}
         onConfirm={() => {
           if (deletingId) {
             deleteAttendance.mutate(deletingId, {
@@ -576,7 +585,7 @@ export default function AttendancePage() {
           }
         }}
         isLoading={deleteAttendance.isPending}
-        confirmText="Delete"
+        confirmText={text("حذف", "Delete")}
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { useStudentsBySection } from "@/hooks/api/useStudents";
 import { useGradeSubjects } from "@/hooks/api/useGradeSubjects";
 import { useGrades } from "@/hooks/api/useGrades";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useLocale } from "@/hooks/useLocale";
 import { SearchSelect } from "@/components/ui/searchselect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,7 @@ const toNumber = (value: string): number | undefined => {
 };
 
 export default function AssessmentPage() {
+  const { text } = useLocale();
   const permissions = usePermissions();
   const canBulkCreate = permissions.canManageGrades;
 
@@ -217,32 +219,32 @@ export default function AssessmentPage() {
     if (!canBulkCreate) return;
 
     if (!selectedGradeId) {
-      toast.error("Please choose grade first");
+      toast.error(text("يرجى اختيار الصف أولاً", "Please choose grade first"));
       return;
     }
 
     if (!selectedSectionId) {
-      toast.error("Please choose a section first");
+      toast.error(text("يرجى اختيار الشعبة أولاً", "Please choose a section first"));
       return;
     }
 
     if (!selectedGradeSubjectId) {
-      toast.error("Please choose grade subject");
+      toast.error(text("يرجى اختيار مادة الصف", "Please choose grade subject"));
       return;
     }
 
     if (!title.trim()) {
-      toast.error("Please enter assessment title");
+      toast.error(text("يرجى إدخال عنوان التقييم", "Please enter assessment title"));
       return;
     }
 
     if (!maxScore || maxScore <= 0) {
-      toast.error("Max score must be greater than zero");
+      toast.error(text("يجب أن تكون الدرجة العظمى أكبر من صفر", "Max score must be greater than zero"));
       return;
     }
 
     if (students.length === 0) {
-      toast.error("No students found for selected section");
+      toast.error(text("لا يوجد طلاب في الشعبة المحددة", "No students found for selected section"));
       return;
     }
 
@@ -252,7 +254,12 @@ export default function AssessmentPage() {
     });
 
     if (missingScores.length > 0) {
-      toast.error(`Please enter score for all students (${missingScores.length} missing)`);
+      toast.error(
+        text(
+          `يرجى إدخال الدرجة لجميع الطلاب (المتبقي ${missingScores.length})`,
+          `Please enter score for all students (${missingScores.length} missing)`
+        )
+      );
       return;
     }
 
@@ -295,20 +302,25 @@ export default function AssessmentPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Assessment Management</h1>
+      <h1 className="text-2xl font-bold">{text("إدارة التقييمات", "Assessment Management")}</h1>
 
       {canBulkCreate && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-xl">Bulk Assessment Scores</CardTitle>
+            <CardTitle className="text-xl">
+              {text("إدخال درجات التقييم دفعة واحدة", "Bulk Assessment Scores")}
+            </CardTitle>
             <CardDescription>
-              Select section, choose grade subject, then enter each student score and submit once.
+              {text(
+                "اختر الشعبة ثم مادة الصف ثم أدخل درجات الطلاب وأرسل مرة واحدة.",
+                "Select section, choose grade subject, then enter each student score and submit once."
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
-                <Label>Grade (Ø§Ù„ØµÙ) *</Label>
+                <Label>{text("الصف", "Grade")} *</Label>
                 <Select
                   value={selectedGradeId ? String(selectedGradeId) : undefined}
                   onValueChange={(value) => {
@@ -325,7 +337,11 @@ export default function AssessmentPage() {
                 >
                   <SelectTrigger>
                     <SelectValue
-                      placeholder={isGradesLoading ? "Loading grades..." : "Select grade"}
+                      placeholder={
+                        isGradesLoading
+                          ? text("جاري تحميل الصفوف...", "Loading grades...")
+                          : text("اختر الصف", "Select grade")
+                      }
                     />
                   </SelectTrigger>
                   <SelectContent>
@@ -342,7 +358,7 @@ export default function AssessmentPage() {
                 {selectedGradeId ? (
                   <>
                     <SearchSelect
-                      label="Section"
+                      label={text("الشعبة", "Section")}
                       query={sectionQuery}
                       setQuery={setSectionQuery}
                       results={sectionResults}
@@ -360,13 +376,15 @@ export default function AssessmentPage() {
                       display={(item) => item.name}
                     />
                     {isSectionsLoading && (
-                      <p className="text-xs text-muted-foreground">Loading sections...</p>
+                      <p className="text-xs text-muted-foreground">
+                        {text("جاري تحميل الشعب...", "Loading sections...")}
+                      </p>
                     )}
                   </>
                 ) : (
                   <>
-                    <Label>Section *</Label>
-                    <Input disabled value="Choose grade first" />
+                    <Label>{text("الشعبة", "Section")} *</Label>
+                    <Input disabled value={text("اختر الصف أولاً", "Choose grade first")} />
                   </>
                 )}
               </div>
@@ -375,7 +393,7 @@ export default function AssessmentPage() {
                 {selectedSectionId ? (
                   <>
                     <SearchSelect
-                      label="Grade Subject"
+                      label={text("مادة الصف", "Grade Subject")}
                       query={gradeSubjectQuery}
                       setQuery={setGradeSubjectQuery}
                       results={gradeSubjectResults}
@@ -390,20 +408,20 @@ export default function AssessmentPage() {
                     />
                     {isGradeSubjectsLoading && (
                       <p className="text-xs text-muted-foreground">
-                        Loading grade subjects...
+                        {text("جاري تحميل مواد الصف...", "Loading grade subjects...")}
                       </p>
                     )}
                   </>
                 ) : (
                   <>
-                    <Label>Grade Subject *</Label>
-                    <Input disabled value="Choose section first" />
+                    <Label>{text("مادة الصف", "Grade Subject")} *</Label>
+                    <Input disabled value={text("اختر الشعبة أولاً", "Choose section first")} />
                   </>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label>Type *</Label>
+                <Label>{text("النوع", "Type")} *</Label>
                 <Select
                   value={assessmentType}
                   onValueChange={(value) => setAssessmentType(value as AssessmentType)}
@@ -422,16 +440,16 @@ export default function AssessmentPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Title *</Label>
+                <Label>{text("العنوان", "Title")} *</Label>
                 <Input
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder="First Term Exam"
+                  placeholder={text("اختبار الفصل الأول", "First Term Exam")}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Max Score *</Label>
+                <Label>{text("الدرجة العظمى", "Max Score")} *</Label>
                 <Input
                   type="number"
                   min={1}
@@ -445,7 +463,7 @@ export default function AssessmentPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Date *</Label>
+                <Label>{text("التاريخ", "Date")} *</Label>
                 <Input
                   type="date"
                   value={assessmentDate}
@@ -455,12 +473,12 @@ export default function AssessmentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>Default Feedback (optional)</Label>
+              <Label>{text("ملاحظات افتراضية (اختياري)", "Default Feedback (optional)")}</Label>
               <Textarea
                 rows={2}
                 value={defaultFeedback}
                 onChange={(event) => setDefaultFeedback(event.target.value)}
-                placeholder="Applied if student feedback is empty"
+                placeholder={text("تُطبّق إذا كانت ملاحظة الطالب فارغة", "Applied if student feedback is empty")}
               />
             </div>
 
@@ -468,10 +486,10 @@ export default function AssessmentPage() {
               <>
                 <div className="flex flex-wrap items-center gap-2">
                   <Button variant="outline" size="sm" onClick={() => applyScoreToAll(maxScore)}>
-                    Fill All = Max Score
+                    {text("تعبئة الكل = الدرجة العظمى", "Fill All = Max Score")}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => applyScoreToAll(0)}>
-                    Fill All = 0
+                    {text("تعبئة الكل = 0", "Fill All = 0")}
                   </Button>
                 </div>
 
@@ -480,22 +498,22 @@ export default function AssessmentPage() {
                     <table className="w-full min-w-[760px] text-sm">
                       <thead className="bg-muted/40">
                         <tr>
-                          <th className="px-3 py-2 text-left font-medium">Student</th>
-                          <th className="px-3 py-2 text-left font-medium">Score</th>
-                          <th className="px-3 py-2 text-left font-medium">Feedback</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("الطالب", "Student")}</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("الدرجة", "Score")}</th>
+                          <th className="px-3 py-2 text-left font-medium">{text("الملاحظات", "Feedback")}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {isStudentsLoading ? (
                           <tr>
                             <td colSpan={3} className="px-3 py-6 text-center text-muted-foreground">
-                              Loading students...
+                              {text("جاري تحميل الطلاب...", "Loading students...")}
                             </td>
                           </tr>
                         ) : students.length === 0 ? (
                           <tr>
                             <td colSpan={3} className="px-3 py-6 text-center text-muted-foreground">
-                              No students found for selected section
+                              {text("لا يوجد طلاب في الشعبة المحددة", "No students found for selected section")}
                             </td>
                           </tr>
                         ) : (
@@ -531,7 +549,7 @@ export default function AssessmentPage() {
                                         feedback: event.target.value,
                                       })
                                     }
-                                    placeholder="Optional"
+                                    placeholder={text("اختياري", "Optional")}
                                   />
                                 </td>
                               </tr>
@@ -552,7 +570,7 @@ export default function AssessmentPage() {
                       students.length === 0
                     }
                   >
-                    Submit Bulk Scores
+                    {text("إرسال الدرجات دفعة واحدة", "Submit Bulk Scores")}
                   </Button>
                 </div>
               </>

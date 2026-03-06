@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/services/auth.service';
 import { LoginCredentials, ChangePasswordData } from '@/types/auth.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const authKeys = {
@@ -24,10 +25,10 @@ export const useLogin = () => {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('user', JSON.stringify(data.user));
       queryClient.setQueryData(authKeys.profile, data.user);
-      toast.success('تم تسجيل الدخول بنجاح');
+      toast.success(localize('تم تسجيل الدخول بنجاح', 'Logged in successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'فشل تسجيل الدخول');
+      toast.error(error.response?.data?.message || localize('فشل تسجيل الدخول', 'Login failed'));
     },
   });
 };
@@ -36,10 +37,10 @@ export const useChangePassword = () => {
   return useMutation({
     mutationFn: (data: ChangePasswordData) => authService.changePassword(data),
     onSuccess: () => {
-      toast.success('تم تغيير كلمة المرور بنجاح');
+      toast.success(localize('تم تغيير كلمة المرور بنجاح', 'Password changed successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'فشل تغيير كلمة المرور');
+      toast.error(error.response?.data?.message || localize('فشل تغيير كلمة المرور', 'Failed to change password'));
     },
   });
 };

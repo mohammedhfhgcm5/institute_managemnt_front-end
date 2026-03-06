@@ -14,10 +14,12 @@ import {
   getStatusLabel,
   getStatusColor,
 } from "@/utils/formatters";
+import { useLocale } from "@/hooks/useLocale";
 import { CheckCheck, Mail, MailOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function NotificationList() {
+  const { text } = useLocale();
   const [page, setPage] = useState(1);
   const { data, isLoading, isError, refetch } = useMyNotifications({
     page,
@@ -34,22 +36,23 @@ export function NotificationList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">إشعاراتي</h3>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold">{text("إشعاراتي", "My Notifications")}</h3>
         <Button
           variant="outline"
           size="sm"
+          className="w-full sm:w-auto"
           onClick={() => markAllRead.mutate()}
           disabled={markAllRead.isPending}
         >
           <CheckCheck className="ml-2 h-4 w-4" />
-          تعليم الكل كمقروء
+          {text("تعليم الكل كمقروء", "Mark all as read")}
         </Button>
       </div>
 
       {notifications.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          لا توجد إشعارات
+          {text("لا توجد إشعارات", "No notifications")}
         </div>
       ) : (
         <div className="space-y-2">
@@ -76,7 +79,7 @@ export function NotificationList() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="mb-1 flex flex-wrap items-center gap-2">
                       <span className="font-medium">{notification.title}</span>
                       <Badge
                         className={cn(
@@ -102,17 +105,17 @@ export function NotificationList() {
       )}
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            السابق
+            {text("السابق", "Previous")}
           </Button>
           <span className="flex items-center px-3 text-sm">
-            {page} من {totalPages}
+            {page} {text("من", "of")} {totalPages}
           </span>
           <Button
             variant="outline"
@@ -120,7 +123,7 @@ export function NotificationList() {
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
           >
-            التالي
+            {text("التالي", "Next")}
           </Button>
         </div>
       )}

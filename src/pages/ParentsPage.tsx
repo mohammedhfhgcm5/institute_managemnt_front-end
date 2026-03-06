@@ -5,10 +5,13 @@ import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { Parent } from '@/types/parent.types';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { ParentForm } from '@/components/parents/ParentForm';
 
 export default function ParentsPage() {
+  const { text } = useLocale();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -28,14 +31,14 @@ export default function ParentsPage() {
     { key: 'id', header: '#' },
     {
       key: 'name',
-      header: 'الاسم',
+      header: text('الاسم', 'Name'),
       render: (p) => `${p.firstName} ${p.lastName}`,
     },
-    { key: 'phone', header: 'الهاتف' },
-    { key: 'email', header: 'البريد الإلكتروني', render: (p) => p.email || '-' },
+    { key: 'phone', header: text('الهاتف', 'Phone') },
+    { key: 'email', header: text('البريد الإلكتروني', 'Email'), render: (p) => p.email || '-' },
     {
       key: 'actions',
-      header: 'الإجراءات',
+      header: text('الإجراءات', 'Actions'),
       render: (p) => (
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={() => { setEditingParent(p); setFormOpen(true); }}>
@@ -51,7 +54,7 @@ export default function ParentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">إدارة أولياء الأمور</h1>
+      <h1 className="text-2xl font-bold">{text('إدارة أولياء الأمور', 'Parent Management')}</h1>
       <DataTable
         columns={columns}
         data={data?.data || []}
@@ -65,11 +68,11 @@ export default function ParentsPage() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="بحث عن ولي أمر..."
+        searchPlaceholder={text('بحث عن ولي أمر...', 'Search parent...')}
         actions={
-          <Button onClick={() => { setEditingParent(null); setFormOpen(true); }}>
-            <Plus className="ml-2 h-4 w-4" />
-            إضافة ولي أمر
+          <Button onClick={() => { setEditingParent(null); setFormOpen(true); }} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {text('إضافة ولي أمر', 'Add Parent')}
           </Button>
         }
       />
@@ -79,13 +82,13 @@ export default function ParentsPage() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="حذف ولي الأمر"
-        description="هل أنت متأكد من حذف ولي الأمر هذا؟"
+        title={text('حذف ولي الأمر', 'Delete Parent')}
+        description={text('هل أنت متأكد من حذف ولي الأمر هذا؟', 'Are you sure you want to delete this parent?')}
         onConfirm={() => {
           if (deletingId) deleteParent.mutate(deletingId, { onSuccess: () => setDeletingId(null) });
         }}
         isLoading={deleteParent.isPending}
-        confirmText="حذف"
+        confirmText={text('حذف', 'Delete')}
       />
     </div>
   );

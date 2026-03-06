@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { paymentService } from '@/services/payment.service';
 import { PaginationParams } from '@/types/common.types';
 import { CreatePaymentData, UpdatePaymentData } from '@/types/payment.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const paymentKeys = {
@@ -52,10 +53,10 @@ export const useCreatePayment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: paymentKeys.stats() });
-      toast.success('تم إضافة الدفعة بنجاح');
+      toast.success(localize('تم إضافة الدفعة بنجاح', 'Payment created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -69,10 +70,10 @@ export const useUpdatePayment = () => {
       queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: paymentKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: paymentKeys.stats() });
-      toast.success('تم تحديث الدفعة بنجاح');
+      toast.success(localize('تم تحديث الدفعة بنجاح', 'Payment updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -84,10 +85,10 @@ export const useDeletePayment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
       queryClient.invalidateQueries({ queryKey: paymentKeys.stats() });
-      toast.success('تم حذف الدفعة بنجاح');
+      toast.success(localize('تم حذف الدفعة بنجاح', 'Payment deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

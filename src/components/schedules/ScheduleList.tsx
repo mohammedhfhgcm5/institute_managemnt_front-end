@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSchedules, useDeleteSchedule } from "@/hooks/api/useSchedules";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useLocale } from "@/hooks/useLocale";
 import { DataTable, Column } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +42,7 @@ const toTimeLabel = (timeValue: string) => {
 };
 
 export function ScheduleList() {
+  const { text } = useLocale();
   const navigate = useNavigate();
   const permissions = usePermissions();
   const canCreateOrEdit = permissions.canManageAttendance;
@@ -108,12 +110,12 @@ export function ScheduleList() {
     { key: "id", header: "#" },
     {
       key: "section",
-      header: "Section",
+      header: text("الشعبة", "Section"),
       render: (item) => item.section?.name || `#${item.sectionId}`,
     },
     {
       key: "subject",
-      header: "Subject",
+      header: text("المادة", "Subject"),
       render: (item) => {
         const gradeName = item.gradeSubject?.grade?.name;
         const subjectName = item.gradeSubject?.subject?.name;
@@ -125,21 +127,21 @@ export function ScheduleList() {
     },
     {
       key: "dayOfWeek",
-      header: "Day",
+      header: text("اليوم", "Day"),
     },
     {
       key: "time",
-      header: "Time",
+      header: text("الوقت", "Time"),
       render: (item) => `${toTimeLabel(item.startTime)} - ${toTimeLabel(item.endTime)}`,
     },
     {
       key: "room",
-      header: "Room",
+      header: text("الغرفة", "Room"),
       render: (item) => item.room || "-",
     },
     {
       key: "status",
-      header: "Status",
+      header: text("الحالة", "Status"),
       render: (item) => (
         <Badge className={cn("text-xs", getStatusColor(item.status))}>
           {getStatusLabel(item.status)}
@@ -148,7 +150,7 @@ export function ScheduleList() {
     },
     {
       key: "actions",
-      header: "Actions",
+      header: text("الإجراءات", "Actions"),
       render: (item) => (
         <div className="flex items-center gap-1">
           {canCreateOrEdit && (
@@ -193,7 +195,7 @@ export function ScheduleList() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search schedules..."
+        searchPlaceholder={text("ابحث عن جدول...", "Search schedules...")}
         actions={
           <div className="flex gap-2">
             {canCreateOrEdit && (
@@ -202,14 +204,15 @@ export function ScheduleList() {
                   setEditingSchedule(null);
                   setFormOpen(true);
                 }}
+                className="gap-2"
               >
-                <Plus className="ml-2 h-4 w-4" />
-                Add Schedule
+                <Plus className="h-4 w-4" />
+                {text("إضافة حصة", "Add Schedule")}
               </Button>
             )}
             <Button variant="outline" onClick={() => navigate("/schedules/builder")}>
               <LayoutGrid className="mr-2 h-4 w-4" />
-              Builder View
+              {text("عرض المُنشئ", "Builder View")}
             </Button>
           </div>
         }
@@ -226,8 +229,8 @@ export function ScheduleList() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Schedule"
-        description="Are you sure you want to delete this schedule?"
+        title={text("حذف الحصة", "Delete Schedule")}
+        description={text("هل أنت متأكد من حذف هذه الحصة؟", "Are you sure you want to delete this schedule?")}
         onConfirm={() => {
           if (deletingId) {
             deleteSchedule.mutate(deletingId, {
@@ -236,7 +239,7 @@ export function ScheduleList() {
           }
         }}
         isLoading={deleteSchedule.isPending}
-        confirmText="Delete"
+        confirmText={text("حذف", "Delete")}
       />
 
     </>

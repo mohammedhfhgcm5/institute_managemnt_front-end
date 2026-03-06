@@ -8,11 +8,14 @@ import { StatCard } from '@/components/common/StatCard';
 import { Payment } from '@/types/payment.types';
 import { formatDate, formatCurrency, getStatusColor, getStatusLabel } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2, CheckCircle, Clock, CircleDollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PaymentForm } from '@/components/payments/PaymentForm';
 
 export default function PaymentsPage() {
+  const { text } = useLocale();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -31,26 +34,26 @@ export default function PaymentsPage() {
 
   const columns: Column<Payment>[] = [
     { key: 'id', header: '#' },
-    { key: 'studentId', header: 'Student ID' },
-    { key: 'academicYear', header: 'Academic Year' },
+    { key: 'studentId', header: text('رقم الطالب', 'Student ID') },
+    { key: 'academicYear', header: text('السنة الدراسية', 'Academic Year') },
     {
       key: 'amount',
-      header: 'Amount',
+      header: text('المبلغ', 'Amount'),
       render: (p) => formatCurrency(p.amount),
     },
     {
       key: 'discount',
-      header: 'Discount',
+      header: text('الخصم', 'Discount'),
       render: (p) => formatCurrency(p.discount),
     },
     {
       key: 'dueDate',
-      header: 'Due Date',
+      header: text('تاريخ الاستحقاق', 'Due Date'),
       render: (p) => formatDate(p.dueDate),
     },
     {
       key: 'status',
-      header: 'Status',
+      header: text('الحالة', 'Status'),
       render: (p) => (
         <Badge className={cn('text-xs', getStatusColor(p.status))}>
           {getStatusLabel(p.status)}
@@ -59,7 +62,7 @@ export default function PaymentsPage() {
     },
     {
       key: 'actions',
-      header: 'Actions',
+      header: text('الإجراءات', 'Actions'),
       render: (p) => (
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={() => { setEditingPayment(p); setFormOpen(true); }}>
@@ -75,26 +78,26 @@ export default function PaymentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Payments</h1>
+      <h1 className="text-2xl font-bold">{text('المدفوعات', 'Payments')}</h1>
 
       {stats && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard
-            title="Paid"
+            title={text('مدفوع', 'Paid')}
             value={formatCurrency(stats.totalPaid)}
             icon={CheckCircle}
             iconColor="text-green-600"
             iconBgColor="bg-green-100"
           />
           <StatCard
-            title="Pending"
+            title={text('قيد الانتظار', 'Pending')}
             value={formatCurrency(stats.totalPending)}
             icon={Clock}
             iconColor="text-yellow-600"
             iconBgColor="bg-yellow-100"
           />
           <StatCard
-            title="Partial"
+            title={text('جزئي', 'Partial')}
             value={formatCurrency(stats.totalPartial)}
             icon={CircleDollarSign}
             iconColor="text-blue-600"
@@ -116,11 +119,11 @@ export default function PaymentsPage() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search..."
+        searchPlaceholder={text('بحث...', 'Search...')}
         actions={
-          <Button onClick={() => { setEditingPayment(null); setFormOpen(true); }}>
-            <Plus className="ml-2 h-4 w-4" />
-            Add Payment
+          <Button onClick={() => { setEditingPayment(null); setFormOpen(true); }} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {text('إضافة دفعة', 'Add Payment')}
           </Button>
         }
       />
@@ -130,13 +133,13 @@ export default function PaymentsPage() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Payment"
-        description="Are you sure you want to delete this payment?"
+        title={text('حذف الدفعة', 'Delete Payment')}
+        description={text('هل أنت متأكد من حذف هذه الدفعة؟', 'Are you sure you want to delete this payment?')}
         onConfirm={() => {
           if (deletingId) deletePayment.mutate(deletingId, { onSuccess: () => setDeletingId(null) });
         }}
         isLoading={deletePayment.isPending}
-        confirmText="Delete"
+        confirmText={text('حذف', 'Delete')}
       />
     </div>
   );

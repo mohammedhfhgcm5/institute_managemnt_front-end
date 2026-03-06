@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { Section } from "@/types/section.types";
 import { formatDate, getStatusColor, getStatusLabel } from "@/utils/formatters";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useLocale } from "@/hooks/useLocale";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SectionForm } from "./SectionForm";
@@ -23,6 +24,7 @@ type SectionWithRelations = Section & {
 };
 
 export function SectionList() {
+  const { text } = useLocale();
   const permissions = usePermissions();
   const canManageSections = permissions.isAdmin;
 
@@ -47,30 +49,30 @@ export function SectionList() {
     { key: "id", header: "#" },
     {
       key: "name",
-      header: "Section",
+      header: text("الشعبة", "Section"),
     },
     {
       key: "gradeId",
-      header: "Grade",
+      header: text("الصف", "Grade"),
       render: (section) => section.grade?.name || `#${section.gradeId}`,
     },
     {
       key: "academicYear",
-      header: "Academic Year",
+      header: text("السنة الدراسية", "Academic Year"),
     },
     {
       key: "maxStudents",
-      header: "Capacity",
+      header: text("السعة", "Capacity"),
       render: (section) => section.maxStudents || "-",
     },
     {
       key: "studentsCount",
-      header: "Students",
+      header: text("الطلاب", "Students"),
       render: (section) => section._count?.students ?? "-",
     },
     {
       key: "status",
-      header: "Status",
+      header: text("الحالة", "Status"),
       render: (section) => (
         <Badge className={cn("text-xs", getStatusColor(section.status))}>
           {getStatusLabel(section.status)}
@@ -79,12 +81,12 @@ export function SectionList() {
     },
     {
       key: "createdAt",
-      header: "Created At",
+      header: text("تاريخ الإنشاء", "Created At"),
       render: (section) => formatDate(section.createdAt),
     },
     {
       key: "actions",
-      header: "Actions",
+      header: text("الإجراءات", "Actions"),
       render: (section) =>
         canManageSections ? (
           <div className="flex items-center gap-1">
@@ -127,7 +129,7 @@ export function SectionList() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Search sections..."
+        searchPlaceholder={text("ابحث عن شعبة...", "Search sections...")}
         actions={
           canManageSections ? (
             <Button
@@ -135,9 +137,10 @@ export function SectionList() {
                 setEditingSection(null);
                 setFormOpen(true);
               }}
+              className="gap-2"
             >
-              <Plus className="ml-2 h-4 w-4" />
-              Add Section
+              <Plus className="h-4 w-4" />
+              {text("إضافة شعبة", "Add Section")}
             </Button>
           ) : null
         }
@@ -154,8 +157,8 @@ export function SectionList() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="Delete Section"
-        description="Are you sure you want to delete this section?"
+        title={text("حذف الشعبة", "Delete Section")}
+        description={text("هل أنت متأكد من حذف هذه الشعبة؟", "Are you sure you want to delete this section?")}
         onConfirm={() => {
           if (deletingId) {
             deleteSection.mutate(deletingId, {
@@ -164,7 +167,7 @@ export function SectionList() {
           }
         }}
         isLoading={deleteSection.isPending}
-        confirmText="Delete"
+        confirmText={text("حذف", "Delete")}
       />
     </>
   );

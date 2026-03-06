@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useCreateCourse, useUpdateCourse } from '@/hooks/api/useCourses';
+import { useLocale } from '@/hooks/useLocale';
 import { Course } from '@/types/course.types';
 import { Loader2 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ interface CourseFormProps {
 }
 
 export function CourseForm({ open, onOpenChange, course }: CourseFormProps) {
+  const { text } = useLocale();
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
   const isEditing = !!course;
@@ -79,23 +81,23 @@ export function CourseForm({ open, onOpenChange, course }: CourseFormProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Course' : 'Add Course'}</DialogTitle>
+          <DialogTitle>{isEditing ? text('تعديل المادة', 'Edit Course') : text('إضافة مادة', 'Add Course')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>Course Name *</Label>
+            <Label>{text('اسم المادة', 'Course Name')} *</Label>
             <Input {...register('name')} />
             {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label>Description</Label>
+            <Label>{text('الوصف', 'Description')}</Label>
             <Textarea {...register('description')} rows={3} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{text('إلغاء', 'Cancel')}</Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? 'Update' : 'Create'}
+              {isEditing ? text('تحديث', 'Update') : text('إنشاء', 'Create')}
             </Button>
           </DialogFooter>
         </form>

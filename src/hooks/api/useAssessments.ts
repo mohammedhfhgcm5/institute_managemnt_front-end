@@ -6,6 +6,7 @@ import {
   CreateAssessmentData,
   UpdateAssessmentData,
 } from '@/types/assessment.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const assessmentKeys = {
@@ -44,10 +45,10 @@ export const useCreateAssessment = () => {
     mutationFn: (data: CreateAssessmentData) => assessmentService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: assessmentKeys.lists() });
-      toast.success('تم إضافة التقييم بنجاح');
+      toast.success(localize('تم إضافة التقييم بنجاح', 'Assessment created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -60,21 +61,24 @@ export const useBulkCreateAssessments = () => {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: assessmentKeys.all });
       if (result.failureCount === 0) {
-        toast.success('All assessments were created successfully');
+        toast.success(localize('تم إنشاء جميع التقييمات بنجاح', 'All assessments were created successfully'));
         return;
       }
 
       if (result.successCount > 0) {
         toast.warning(
-          `${result.successCount} assessments created, ${result.failureCount} failed`
+          localize(
+            `تم إنشاء ${result.successCount} تقييم، وفشل ${result.failureCount}`,
+            `${result.successCount} assessments created, ${result.failureCount} failed`
+          )
         );
         return;
       }
 
-      toast.error('Failed to create assessments');
+      toast.error(localize('فشل إنشاء التقييمات', 'Failed to create assessments'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -89,10 +93,10 @@ export const useUpdateAssessment = () => {
       queryClient.invalidateQueries({
         queryKey: assessmentKeys.detail(variables.id),
       });
-      toast.success('تم تحديث التقييم بنجاح');
+      toast.success(localize('تم تحديث التقييم بنجاح', 'Assessment updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -103,10 +107,10 @@ export const useDeleteAssessment = () => {
     mutationFn: (id: number) => assessmentService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: assessmentKeys.lists() });
-      toast.success('تم حذف التقييم بنجاح');
+      toast.success(localize('تم حذف التقييم بنجاح', 'Assessment deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

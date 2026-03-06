@@ -23,6 +23,7 @@ import {
 import { SearchSelect } from "@/components/ui/searchselect";
 import { useCreatePayment, useUpdatePayment } from "@/hooks/api/usePayments";
 import { useStudent, useStudents } from "@/hooks/api/useStudents";
+import { useLocale } from "@/hooks/useLocale";
 import { Payment } from "@/types/payment.types";
 import { ACADEMIC_YEARS } from "@/utils/constants";
 import { Loader2 } from "lucide-react";
@@ -41,6 +42,7 @@ interface PaymentFormProps {
 }
 
 export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
+  const { text } = useLocale();
   const createPayment = useCreatePayment();
   const updatePayment = useUpdatePayment();
   const isEditing = !!payment;
@@ -146,14 +148,14 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Payment" : "Add Payment"}</DialogTitle>
+          <DialogTitle>{isEditing ? text("تعديل الدفعة", "Edit Payment") : text("إضافة دفعة", "Add Payment")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <SearchSelect
-                label="Student"
+                label={text("الطالب", "Student")}
                 query={studentQuery}
                 setQuery={setStudentQuery}
                 results={studentResults}
@@ -175,7 +177,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Academic Year *</Label>
+              <Label>{text("السنة الدراسية", "Academic Year")} *</Label>
               <Select
                 value={watch("academicYear")}
                 onValueChange={(val) => setValue("academicYear", val)}
@@ -197,22 +199,22 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Amount *</Label>
+              <Label>{text("المبلغ", "Amount")} *</Label>
               <Input type="number" {...register("amount", { valueAsNumber: true })} />
               {errors.amount && (
                 <p className="text-sm text-destructive">{errors.amount.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Discount</Label>
+              <Label>{text("الخصم", "Discount")}</Label>
               <Input type="number" {...register("discount", { valueAsNumber: true })} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Status</Label>
+            <Label>{text("الحالة", "Status")}</Label>
             <Select
               value={watch("status")}
               onValueChange={(val) => setValue("status", val as PaymentFormData["status"])}
@@ -221,39 +223,39 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-                <SelectItem value="partial">Partial</SelectItem>
+                <SelectItem value="pending">{text("معلق", "Pending")}</SelectItem>
+                <SelectItem value="paid">{text("مدفوع", "Paid")}</SelectItem>
+                <SelectItem value="partial">{text("جزئي", "Partial")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Due Date *</Label>
+              <Label>{text("تاريخ الاستحقاق", "Due Date")} *</Label>
               <Input type="date" {...register("dueDate")} />
               {errors.dueDate && (
                 <p className="text-sm text-destructive">{errors.dueDate.message}</p>
               )}
             </div>
             <div className="space-y-2">
-              <Label>Payment Date</Label>
+              <Label>{text("تاريخ الدفع", "Payment Date")}</Label>
               <Input type="date" {...register("paymentDate")} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Notes</Label>
+            <Label>{text("الملاحظات", "Notes")}</Label>
             <Textarea {...register("notes")} rows={2} />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "Update" : "Create"}
+              {isEditing ? text("تحديث", "Update") : text("إنشاء", "Create")}
             </Button>
           </DialogFooter>
         </form>

@@ -4,6 +4,7 @@ import {
   CreateGradeSubjectData,
   UpdateGradeSubjectData,
 } from '@/types/grade-subject.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const gradeSubjectKeys = {
@@ -49,10 +50,10 @@ export const useCreateGradeSubject = () => {
     mutationFn: (data: CreateGradeSubjectData) => gradeSubjectService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradeSubjectKeys.all });
-      toast.success('تم إنشاء ربط مادة الصف بنجاح');
+      toast.success(localize('تم إنشاء ربط مادة الصف بنجاح', 'Grade-subject link created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -65,10 +66,10 @@ export const useUpdateGradeSubject = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: gradeSubjectKeys.all });
       queryClient.invalidateQueries({ queryKey: gradeSubjectKeys.detail(variables.id) });
-      toast.success('تم تحديث ربط مادة الصف بنجاح');
+      toast.success(localize('تم تحديث ربط مادة الصف بنجاح', 'Grade-subject link updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -79,10 +80,10 @@ export const useDeleteGradeSubject = () => {
     mutationFn: (id: number) => gradeSubjectService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradeSubjectKeys.all });
-      toast.success('تم حذف ربط مادة الصف بنجاح');
+      toast.success(localize('تم حذف ربط مادة الصف بنجاح', 'Grade-subject link deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useLogin } from '@/hooks/api/useAuth';
 import { useAuth } from '@/context/AuthContext';
+import { useLocale } from '@/hooks/useLocale';
 import { Loader2, GraduationCap } from 'lucide-react';
 import { z } from 'zod';
 
@@ -15,6 +16,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const loginMutation = useLogin();
   const { login } = useAuth();
+  const { text } = useLocale();
 
   const {
     register,
@@ -41,13 +43,20 @@ export default function LoginPage() {
               <GraduationCap className="h-10 w-10 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">نظام إدارة المدرسة</CardTitle>
-          <CardDescription>قم بتسجيل الدخول للوصول إلى لوحة التحكم</CardDescription>
+          <CardTitle className="text-2xl">
+            {text('نظام إدارة المدرسة', 'School Management System')}
+          </CardTitle>
+          <CardDescription>
+            {text(
+              'قم بتسجيل الدخول للوصول إلى لوحة التحكم',
+              'Sign in to access the dashboard'
+            )}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label>البريد الإلكتروني</Label>
+              <Label>{text('البريد الإلكتروني', 'Email')}</Label>
               <Input
                 type="email"
                 placeholder="admin@school.com"
@@ -58,7 +67,7 @@ export default function LoginPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label>كلمة المرور</Label>
+              <Label>{text('كلمة المرور', 'Password')}</Label>
               <Input
                 type="password"
                 placeholder="••••••••"
@@ -73,10 +82,12 @@ export default function LoginPage() {
               className="w-full"
               disabled={loginMutation.isPending}
             >
-              {loginMutation.isPending && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              )}
-              تسجيل الدخول
+              <span className="inline-flex items-center gap-2">
+                {loginMutation.isPending && (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                )}
+                {text('تسجيل الدخول', 'Login')}
+              </span>
             </Button>
           </form>
         </CardContent>

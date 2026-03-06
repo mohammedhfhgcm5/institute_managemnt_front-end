@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportService } from '@/services/report.service';
 import { PaginationParams } from '@/types/common.types';
 import { CreateReportData } from '@/types/report.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 export const reportKeys = {
@@ -33,10 +34,10 @@ export const useCreateReport = () => {
     mutationFn: (data: CreateReportData) => reportService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reportKeys.lists() });
-      toast.success('تم إنشاء التقرير بنجاح');
+      toast.success(localize('تم إنشاء التقرير بنجاح', 'Report created successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -47,10 +48,10 @@ export const useDeleteReport = () => {
     mutationFn: (id: number) => reportService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reportKeys.lists() });
-      toast.success('تم حذف التقرير بنجاح');
+      toast.success(localize('تم حذف التقرير بنجاح', 'Report deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

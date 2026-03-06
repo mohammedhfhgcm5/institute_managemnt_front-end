@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
+import { useLocale } from '@/hooks/useLocale';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -28,10 +29,14 @@ export function ConfirmDialog({
   description,
   onConfirm,
   isLoading = false,
-  confirmText = 'تأكيد',
-  cancelText = 'إلغاء',
+  confirmText,
+  cancelText,
   variant = 'destructive',
 }: ConfirmDialogProps) {
+  const { text } = useLocale();
+  const resolvedConfirmText = confirmText || text('تأكيد', 'Confirm');
+  const resolvedCancelText = cancelText || text('إلغاء', 'Cancel');
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -45,11 +50,11 @@ export function ConfirmDialog({
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            {cancelText}
+            {resolvedCancelText}
           </Button>
-          <Button variant={variant} onClick={onConfirm} disabled={isLoading}>
-            {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-            {confirmText}
+          <Button variant={variant} onClick={onConfirm} disabled={isLoading} className="gap-2">
+            {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {resolvedConfirmText}
           </Button>
         </DialogFooter>
       </DialogContent>

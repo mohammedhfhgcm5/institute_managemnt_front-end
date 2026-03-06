@@ -24,6 +24,7 @@ import {
   useCreateAttendance,
   useUpdateAttendance,
 } from "@/hooks/api/useAttendance";
+import { useLocale } from "@/hooks/useLocale";
 import { Attendance } from "@/types/attendance.types";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
@@ -54,6 +55,7 @@ export function AttendanceForm({
   onOpenChange,
   attendance,
 }: AttendanceFormProps) {
+  const { text } = useLocale();
   const createAttendance = useCreateAttendance();
   const updateAttendance = useUpdateAttendance();
   const isEditing = !!attendance;
@@ -118,12 +120,12 @@ export function AttendanceForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{isEditing ? "تعديل الحضور" : "تسجيل حضور"}</DialogTitle>
+          <DialogTitle>{isEditing ? text("تعديل الحضور", "Edit Attendance") : text("تسجيل حضور", "Record Attendance")}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>رقم الطالب *</Label>
+              <Label>{text("رقم الطالب", "Student ID")} *</Label>
               <Input
                 type="number"
                 min={1}
@@ -139,7 +141,7 @@ export function AttendanceForm({
               )}
             </div>
             <div className="space-y-2">
-              <Label>رقم الجدول *</Label>
+              <Label>{text("رقم الجدول", "Schedule ID")} *</Label>
               <Input
                 type="number"
                 min={1}
@@ -156,14 +158,14 @@ export function AttendanceForm({
             </div>
           </div>
           <div className="space-y-2">
-            <Label>التاريخ *</Label>
+            <Label>{text("التاريخ", "Date")} *</Label>
             <Input type="date" {...register("date")} />
             {errors.date && (
               <p className="text-sm text-destructive">{errors.date.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label>الحالة *</Label>
+            <Label>{text("الحالة", "Status")} *</Label>
             <Select
               value={watch("status")}
               onValueChange={(val) =>
@@ -176,10 +178,10 @@ export function AttendanceForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="present">حاضر</SelectItem>
-                <SelectItem value="absent">غائب</SelectItem>
-                <SelectItem value="late">متأخر</SelectItem>
-                <SelectItem value="excused">معذور</SelectItem>
+                <SelectItem value="present">{text("حاضر", "Present")}</SelectItem>
+                <SelectItem value="absent">{text("غائب", "Absent")}</SelectItem>
+                <SelectItem value="late">{text("متأخر", "Late")}</SelectItem>
+                <SelectItem value="excused">{text("معذور", "Excused")}</SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
@@ -189,7 +191,7 @@ export function AttendanceForm({
             )}
           </div>
           <div className="space-y-2">
-            <Label>ملاحظات</Label>
+            <Label>{text("ملاحظات", "Notes")}</Label>
             <Textarea {...register("notes")} rows={2} />
           </div>
           <DialogFooter>
@@ -198,11 +200,11 @@ export function AttendanceForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              إلغاء
+              {text("إلغاء", "Cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-              {isEditing ? "تحديث" : "تسجيل"}
+              {isEditing ? text("تحديث", "Update") : text("تسجيل", "Save")}
             </Button>
           </DialogFooter>
         </form>

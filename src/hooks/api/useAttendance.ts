@@ -7,6 +7,7 @@ import {
   CreateAttendanceData,
   UpdateAttendanceData,
 } from '@/types/attendance.types';
+import { localize } from '@/i18n/localize';
 import { toast } from 'sonner';
 
 type AttendanceListParams = PaginationParams & AttendanceFilterParams;
@@ -44,10 +45,10 @@ export const useCreateAttendance = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.stats() });
-      toast.success('تم تسجيل الحضور بنجاح');
+      toast.success(localize('تم تسجيل الحضور بنجاح', 'Attendance saved successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -59,10 +60,10 @@ export const useBulkCreateAttendance = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.stats() });
-      toast.success('Bulk attendance has been saved');
+      toast.success(localize('تم حفظ الحضور الجماعي', 'Bulk attendance has been saved'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'Something went wrong');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -75,10 +76,10 @@ export const useUpdateAttendance = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.stats() });
-      toast.success('تم تحديث الحضور بنجاح');
+      toast.success(localize('تم تحديث الحضور بنجاح', 'Attendance updated successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };
@@ -89,10 +90,10 @@ export const useDeleteAttendance = () => {
     mutationFn: (id: number) => attendanceService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
-      toast.success('تم حذف سجل الحضور بنجاح');
+      toast.success(localize('تم حذف سجل الحضور بنجاح', 'Attendance record deleted successfully'));
     },
     onError: (error: { response?: { data?: { message?: string } } }) => {
-      toast.error(error.response?.data?.message || 'حدث خطأ');
+      toast.error(error.response?.data?.message || localize('حدث خطأ', 'Something went wrong'));
     },
   });
 };

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -12,6 +11,7 @@ import { SearchInput } from './SearchInput';
 import { LoadingSpinner } from './LoadingSpinner';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { ErrorMessage } from './ErrorMessage';
+import { useLocale } from '@/hooks/useLocale';
 
 export interface Column<T> {
   key: string;
@@ -57,6 +57,8 @@ export function DataTable<T extends { id: number | string }>({
   actions,
   onRowDoubleClick,
 }: DataTableProps<T>) {
+  const { isArabic, text } = useLocale();
+
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorMessage message={error} onRetry={onRetry} />;
 
@@ -71,7 +73,11 @@ export function DataTable<T extends { id: number | string }>({
             className="w-full sm:max-w-sm"
           />
         )}
-        {actions && <div className="flex gap-2">{actions}</div>}
+        {actions && (
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+            {actions}
+          </div>
+        )}
       </div>
 
       <div className="rounded-md border">
@@ -90,7 +96,7 @@ export function DataTable<T extends { id: number | string }>({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  لا توجد بيانات
+                  {text('لا توجد بيانات', 'No data available')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -115,18 +121,23 @@ export function DataTable<T extends { id: number | string }>({
       </div>
 
       {onPageChange && totalPages > 1 && (
-        <div className="flex items-center justify-between px-2">
-          <p className="text-sm text-muted-foreground">
-            عرض {(page - 1) * limit + 1} - {Math.min(page * limit, total)} من {total}
+        <div className="flex flex-col gap-3 px-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-center text-sm text-muted-foreground sm:text-start">
+            {text('عرض', 'Showing')} {(page - 1) * limit + 1} -{' '}
+            {Math.min(page * limit, total)} {text('من', 'of')} {total}
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center justify-center gap-1 sm:flex-nowrap sm:justify-end">
             <Button
               variant="outline"
               size="icon"
               onClick={() => onPageChange(1)}
               disabled={page === 1}
             >
-              <ChevronsRight className="h-4 w-4" />
+              {isArabic ? (
+                <ChevronsRight className="h-4 w-4" />
+              ) : (
+                <ChevronsLeft className="h-4 w-4" />
+              )}
             </Button>
             <Button
               variant="outline"
@@ -134,10 +145,14 @@ export function DataTable<T extends { id: number | string }>({
               onClick={() => onPageChange(page - 1)}
               disabled={page === 1}
             >
-              <ChevronRight className="h-4 w-4" />
+              {isArabic ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
             </Button>
             <span className="px-3 text-sm">
-              صفحة {page} من {totalPages}
+              {text('صفحة', 'Page')} {page} {text('من', 'of')} {totalPages}
             </span>
             <Button
               variant="outline"
@@ -145,7 +160,11 @@ export function DataTable<T extends { id: number | string }>({
               onClick={() => onPageChange(page + 1)}
               disabled={page === totalPages}
             >
-              <ChevronLeft className="h-4 w-4" />
+              {isArabic ? (
+                <ChevronLeft className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </Button>
             <Button
               variant="outline"
@@ -153,7 +172,11 @@ export function DataTable<T extends { id: number | string }>({
               onClick={() => onPageChange(totalPages)}
               disabled={page === totalPages}
             >
-              <ChevronsLeft className="h-4 w-4" />
+              {isArabic ? (
+                <ChevronsLeft className="h-4 w-4" />
+              ) : (
+                <ChevronsRight className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { Teacher } from '@/types/teacher.types';
 import { formatDate, formatCurrency, getStatusColor, getStatusLabel } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useLocale } from '@/hooks/useLocale';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TeacherForm } from './TeacherForm';
@@ -19,6 +20,8 @@ import {
 } from '@/components/ui/dialog';
 
 export function TeacherList() {
+  const { text } = useLocale();
+
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
@@ -40,28 +43,28 @@ export function TeacherList() {
     { key: 'id', header: '#' },
     {
       key: 'name',
-      header: 'الاسم',
+      header: text('الاسم', 'Name'),
       render: (t) => `${t.firstName} ${t.lastName}`,
     },
-    { key: 'specialization', header: 'التخصص' },
+    { key: 'specialization', header: text('التخصص', 'Specialization') },
     {
       key: 'experienceYears',
-      header: 'سنوات الخبرة',
+      header: text('سنوات الخبرة', 'Experience Years'),
       render: (t) => t.experienceYears ?? '-',
     },
     {
       key: 'salary',
-      header: 'الراتب',
+      header: text('الراتب', 'Salary'),
       render: (t) => (t.salary ?? '-'),
     },
     {
       key: 'hireDate',
-      header: 'تاريخ التوظيف',
+      header: text('تاريخ التوظيف', 'Hire Date'),
       render: (t) => (t.hireDate ? formatDate(t.hireDate) : '-'),
     },
     {
       key: 'status',
-      header: 'الحالة',
+      header: text('الحالة', 'Status'),
       render: (t) => (
         <Badge className={cn('text-xs', getStatusColor(t.status))}>
           {getStatusLabel(t.status)}
@@ -70,7 +73,7 @@ export function TeacherList() {
     },
     {
       key: 'actions',
-      header: 'الإجراءات',
+      header: text('الإجراءات', 'Actions'),
       render: (t) => (
         <div className="flex items-center gap-1">
           <Button
@@ -106,7 +109,7 @@ export function TeacherList() {
         onPageChange={setPage}
         searchValue={search}
         onSearchChange={setSearch}
-        searchPlaceholder="ابحث عن المعلمين..."
+        searchPlaceholder={text('ابحث عن المعلمين...', 'Search teachers...')}
         onRowDoubleClick={(teacher) => {
           setDetailTeacherId(teacher.id);
           setDetailOpen(true);
@@ -117,9 +120,10 @@ export function TeacherList() {
               setEditingTeacher(null);
               setFormOpen(true);
             }}
+            className="gap-2"
           >
-            <Plus className="ml-2 h-4 w-4" />
-            إضافة معلم
+            <Plus className="h-4 w-4" />
+            {text('إضافة معلم', 'Add Teacher')}
           </Button>
         }
       />
@@ -129,7 +133,7 @@ export function TeacherList() {
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>تفاصيل المعلم</DialogTitle>
+            <DialogTitle>{text('تفاصيل المعلم', 'Teacher Details')}</DialogTitle>
           </DialogHeader>
           {detailTeacherId ? <TeacherDetail teacherId={detailTeacherId} /> : null}
         </DialogContent>
@@ -138,15 +142,15 @@ export function TeacherList() {
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title="حذف المعلم"
-        description="هل أنت متأكد من حذف هذا المعلم؟"
+        title={text('حذف المعلم', 'Delete Teacher')}
+        description={text('هل أنت متأكد من حذف هذا المعلم؟', 'Are you sure you want to delete this teacher?')}
         onConfirm={() => {
           if (deletingId) {
             deleteTeacher.mutate(deletingId, { onSuccess: () => setDeletingId(null) });
           }
         }}
         isLoading={deleteTeacher.isPending}
-        confirmText="حذف"
+        confirmText={text('حذف', 'Delete')}
       />
     </>
   );
