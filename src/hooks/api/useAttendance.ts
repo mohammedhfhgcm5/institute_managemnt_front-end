@@ -3,8 +3,8 @@ import { attendanceService } from '@/services/attendance.service';
 import { PaginationParams } from '@/types/common.types';
 import {
   AttendanceFilterParams,
-  BulkAttendanceData,
   CreateAttendanceData,
+  SmartBulkAttendanceData,
   UpdateAttendanceData,
 } from '@/types/attendance.types';
 import { localize } from '@/i18n/localize';
@@ -56,7 +56,8 @@ export const useCreateAttendance = () => {
 export const useBulkCreateAttendance = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: BulkAttendanceData) => attendanceService.bulkCreate(data),
+    mutationFn: (data: SmartBulkAttendanceData) =>
+      attendanceService.smartBulkCreate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.lists() });
       queryClient.invalidateQueries({ queryKey: attendanceKeys.stats() });

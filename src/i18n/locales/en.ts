@@ -408,6 +408,8 @@ export const enTranslations = {
   "Select section": "Select section",
   "Select section and schedule, then submit attendance for all students in one request.":
     "Select section and schedule, then submit attendance for all students in one request.",
+  "Select section, set date, then submit attendance once. Only non-present students are sent as exceptions.":
+    "Select section, set date, then submit attendance once. Only non-present students are sent as exceptions.",
   "Select section, choose grade subject, then enter each student score and submit once.":
     "Select section, choose grade subject, then enter each student score and submit once.",
   "Select student": "Select student",

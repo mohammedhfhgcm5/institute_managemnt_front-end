@@ -8,12 +8,12 @@ import {
 } from "@/types/common.types";
 import {
   Attendance,
-  BulkAttendanceData,
   BulkAttendanceResult,
   CreateAttendanceData,
   UpdateAttendanceData,
   AttendanceStats,
   AttendanceFilterParams,
+  SmartBulkAttendanceData,
 } from "@/types/attendance.types";
 
 interface AttendanceStatsApiResponse {
@@ -153,13 +153,13 @@ export const attendanceService = {
     return response.data.data;
   },
 
-  bulkCreate: async (
-    data: BulkAttendanceData,
+  smartBulkCreate: async (
+    data: SmartBulkAttendanceData,
   ): Promise<BulkAttendanceResult> => {
     const response = await apiClient.post<
       ApiResponse<BulkAttendanceResult> | BulkAttendanceResult
     >(
-      ENDPOINTS.ATTENDANCE_BULK,
+      ENDPOINTS.ATTENDANCE_SMART_BULK,
       data,
     );
     const payload = response.data;
@@ -174,6 +174,12 @@ export const attendanceService = {
     }
 
     return payload as BulkAttendanceResult;
+  },
+
+  bulkCreate: async (
+    data: SmartBulkAttendanceData,
+  ): Promise<BulkAttendanceResult> => {
+    return attendanceService.smartBulkCreate(data);
   },
 
   update: async (

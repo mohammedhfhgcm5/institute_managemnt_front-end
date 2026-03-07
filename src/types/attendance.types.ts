@@ -41,7 +41,6 @@ export interface Attendance {
 
 export interface CreateAttendanceData {
   studentId: number;
-  scheduleId: number;
   date: string;
   status: AttendanceStatus;
   lateMinutes?: number;
@@ -50,23 +49,26 @@ export interface CreateAttendanceData {
 
 export interface UpdateAttendanceData extends Partial<CreateAttendanceData> {}
 
-export interface BulkAttendanceItemData {
+export interface ExceptionStudentData {
   studentId: number;
   status: AttendanceStatus;
   lateMinutes?: number;
   notes?: string;
 }
 
-export interface BulkAttendanceData {
-  scheduleId: number;
+export interface SmartBulkAttendanceData {
+  sectionId: number;
   date: string;
-  students: BulkAttendanceItemData[];
+  exceptions?: ExceptionStudentData[];
 }
 
 export interface BulkAttendanceResult {
   message: string;
   data: Attendance[];
 }
+
+export type BulkAttendanceItemData = ExceptionStudentData;
+export type BulkAttendanceData = SmartBulkAttendanceData;
 
 export interface AttendanceFilterParams {
   studentId?: number;

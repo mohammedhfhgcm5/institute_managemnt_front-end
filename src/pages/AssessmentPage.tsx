@@ -63,11 +63,6 @@ export default function AssessmentPage() {
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0);
   const [selectedGradeSubjectId, setSelectedGradeSubjectId] = useState<number>(0);
 
-  const [sectionQuery, setSectionQuery] = useState("");
-  const [sectionResults, setSectionResults] = useState<SearchOption[]>([]);
-  const [selectedSectionOption, setSelectedSectionOption] =
-    useState<SearchOption | null>(null);
-
   const [gradeSubjectQuery, setGradeSubjectQuery] = useState("");
   const [gradeSubjectResults, setGradeSubjectResults] = useState<SearchOption[]>([]);
   const [selectedGradeSubjectOption, setSelectedGradeSubjectOption] =
@@ -117,11 +112,6 @@ export default function AssessmentPage() {
     );
   }, [gradeSubjects, selectedGradeId]);
 
-  const sectionOptions = useMemo<SearchOption[]>(
-    () => sections.map((section) => ({ id: section.id, name: section.name })),
-    [sections]
-  );
-
   const gradeSubjectOptions = useMemo<SearchOption[]>(
     () =>
       filteredGradeSubjects.map((item) => ({
@@ -130,18 +120,6 @@ export default function AssessmentPage() {
       })),
     [filteredGradeSubjects]
   );
-
-  useEffect(() => {
-    const query = sectionQuery.trim().toLowerCase();
-    if (!query) {
-      setSectionResults([]);
-      return;
-    }
-
-    setSectionResults(
-      sectionOptions.filter((option) => option.name.toLowerCase().includes(query))
-    );
-  }, [sectionOptions, sectionQuery]);
 
   useEffect(() => {
     if (!selectedSectionId) {
@@ -327,10 +305,7 @@ export default function AssessmentPage() {
                     setSelectedGradeId(Number(value));
                     setSelectedSectionId(0);
                     setSelectedGradeSubjectId(0);
-                    setSelectedSectionOption(null);
                     setSelectedGradeSubjectOption(null);
-                    setSectionQuery("");
-                    setSectionResults([]);
                     setGradeSubjectQuery("");
                     setGradeSubjectResults([]);
                   }}
@@ -357,24 +332,35 @@ export default function AssessmentPage() {
               <div className="space-y-2">
                 {selectedGradeId ? (
                   <>
-                    <SearchSelect
-                      label={text("الشعبة", "Section")}
-                      query={sectionQuery}
-                      setQuery={setSectionQuery}
-                      results={sectionResults}
-                      setResults={setSectionResults}
-                      selected={selectedSectionOption}
-                      setSelected={setSelectedSectionOption}
-                      setValue={(id) => {
-                        setSelectedSectionId(id);
+                    <Label>{text("الشعبة", "Section")} *</Label>
+                    <Select
+                      value={selectedSectionId ? String(selectedSectionId) : undefined}
+                      onValueChange={(value) => {
+                        setSelectedSectionId(Number(value));
                         setSelectedGradeSubjectId(0);
                         setSelectedGradeSubjectOption(null);
                         setGradeSubjectQuery("");
                         setGradeSubjectResults([]);
-                        setSectionQuery("");
                       }}
-                      display={(item) => item.name}
-                    />
+                      disabled={isSectionsLoading}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            isSectionsLoading
+                              ? text("جاري تحميل الشعب...", "Loading sections...")
+                              : text("اختر الشعبة", "Select section")
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sections.map((section) => (
+                          <SelectItem key={section.id} value={String(section.id)}>
+                            {section.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     {isSectionsLoading && (
                       <p className="text-xs text-muted-foreground">
                         {text("جاري تحميل الشعب...", "Loading sections...")}

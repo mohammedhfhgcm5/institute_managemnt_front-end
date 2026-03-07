@@ -227,23 +227,7 @@ export function OverviewCards() {
       badge: isProfit ? text("إيجابي", "Positive") : text("سلبي", "Negative"),
       badgeColor: isProfit ? "#22c55e" : "#ef4444",
     },
-    {
-      title: text("الإشعارات غير المقروءة", "Unread Notifications"),
-      value: formatNumber(stats.notifications.unread),
-      icon: Bell,
-      color: stats.notifications.unread > 0 ? "#eab308" : "#94a3b8",
-      bg: stats.notifications.unread > 0 ? "#eab30815" : "#94a3b815",
-      trend: stats.notifications.unread > 0 ? "down" : "neutral",
-      trendLabel:
-        stats.notifications.unread > 0
-          ? text("تحتاج مراجعة", "Need review")
-          : text("لا يوجد جديد", "All clear"),
-      badge:
-        stats.notifications.unread > 0
-          ? String(stats.notifications.unread)
-          : undefined,
-      badgeColor: "#eab308",
-    },
+    
   ];
 
   return (

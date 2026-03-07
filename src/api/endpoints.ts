@@ -34,6 +34,7 @@ ASSESSMENTS_BY_STUDENT: (studentId: number) => `/assessments/student/${studentId
   ATTENDANCE: '/attendance',
   ATTENDANCE_BY_ID: (id: number) => `/attendance/${id}`,
   ATTENDANCE_BULK: '/attendance/bulk',
+  ATTENDANCE_SMART_BULK: '/attendance/smart-bulk',
   ATTENDANCE_STATS: (studentId: number) => `/attendance/stats/${studentId}`,
 
   GRADES: '/grades',
