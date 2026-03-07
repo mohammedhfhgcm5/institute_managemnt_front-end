@@ -43,14 +43,14 @@ export default function ScheduleBuilderPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-blue-100 p-2">
-            <LayoutGrid className="h-5 w-5 text-blue-600" />
+          <div className="rounded-lg bg-primary/15 p-2">
+            <LayoutGrid className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{text("منشئ الجداول", "Schedule Builder")}</h1>
-            <p className="text-sm text-slate-500">
+            <h1 className="text-2xl font-bold">{text("Ù…Ù†Ø´Ø¦ Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„", "Schedule Builder")}</h1>
+            <p className="text-sm text-muted-foreground">
               {text(
-                "اختر الصف أولاً ثم اختر الشعبة لبناء جدولها.",
+                "Ø§Ø®ØªØ± Ø§Ù„ØµÙ Ø£ÙˆÙ„Ø§Ù‹ Ø«Ù… Ø§Ø®ØªØ± Ø§Ù„Ø´Ø¹Ø¨Ø© Ù„Ø¨Ù†Ø§Ø¡ Ø¬Ø¯ÙˆÙ„Ù‡Ø§.",
                 "Select grade first, then choose a section to build its schedule."
               )}
             </p>
@@ -58,16 +58,16 @@ export default function ScheduleBuilderPage() {
         </div>
         <Button variant="outline" onClick={() => navigate("/schedules")}>
           <ArrowLeft className={isArabic ? "ml-2 h-4 w-4" : "mr-2 h-4 w-4"} />
-          {text("العودة للجداول", "Back to Schedules")}
+          {text("Ø§Ù„Ø¹ÙˆØ¯Ø© Ù„Ù„Ø¬Ø¯Ø§ÙˆÙ„", "Back to Schedules")}
         </Button>
       </div>
 
       {!selectedSectionId ? (
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-border bg-card p-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">
-                {text("الصف", "Grade")}
+              <label className="block text-sm font-medium text-foreground">
+                {text("Ø§Ù„ØµÙ", "Grade")}
               </label>
               <Select
                 value={selectedGradeId ? String(selectedGradeId) : undefined}
@@ -81,8 +81,8 @@ export default function ScheduleBuilderPage() {
                   <SelectValue
                     placeholder={
                       isGradesLoading
-                        ? text("جاري تحميل الصفوف...", "Loading grades...")
-                        : text("اختر الصف...", "Choose grade...")
+                        ? text("Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙÙˆÙ...", "Loading grades...")
+                        : text("Ø§Ø®ØªØ± Ø§Ù„ØµÙ...", "Choose grade...")
                     }
                   />
                 </SelectTrigger>
@@ -97,8 +97,8 @@ export default function ScheduleBuilderPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-700">
-                {text("الشعبة", "Section")}
+              <label className="block text-sm font-medium text-foreground">
+                {text("Ø§Ù„Ø´Ø¹Ø¨Ø©", "Section")}
               </label>
               <Select
                 value={selectedSectionId ? String(selectedSectionId) : undefined}
@@ -114,10 +114,10 @@ export default function ScheduleBuilderPage() {
                   <SelectValue
                     placeholder={
                       !selectedGradeId
-                        ? text("اختر الصف أولاً", "Choose grade first")
+                        ? text("Ø§Ø®ØªØ± Ø§Ù„ØµÙ Ø£ÙˆÙ„Ø§Ù‹", "Choose grade first")
                         : isSectionsLoading
-                          ? text("جاري تحميل الشعب...", "Loading sections...")
-                          : text("اختر الشعبة...", "Choose section...")
+                          ? text("Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø´Ø¹Ø¨...", "Loading sections...")
+                          : text("Ø§Ø®ØªØ± Ø§Ù„Ø´Ø¹Ø¨Ø©...", "Choose section...")
                     }
                   />
                 </SelectTrigger>
@@ -143,7 +143,7 @@ export default function ScheduleBuilderPage() {
                 setSelectedSectionName("");
               }}
             >
-              {text("تغيير الشعبة", "Change Section")}
+              {text("ØªØºÙŠÙŠØ± Ø§Ù„Ø´Ø¹Ø¨Ø©", "Change Section")}
             </Button>
           </div>
         </>
@@ -151,3 +151,4 @@ export default function ScheduleBuilderPage() {
     </div>
   );
 }
+

@@ -67,24 +67,24 @@ const TIME_SLOTS = [
 
 // Color palette for module assignment based on ID
 const COLOR_PALETTE: ColorScheme[] = [
-  { bg: 'bg-blue-100', border: 'border-blue-400', text: 'text-blue-700' },
-  { bg: 'bg-emerald-100', border: 'border-emerald-400', text: 'text-emerald-700' },
-  { bg: 'bg-purple-100', border: 'border-purple-400', text: 'text-purple-700' },
-  { bg: 'bg-orange-100', border: 'border-orange-400', text: 'text-orange-700' },
-  { bg: 'bg-indigo-100', border: 'border-indigo-400', text: 'text-indigo-700' },
-  { bg: 'bg-cyan-100', border: 'border-cyan-400', text: 'text-cyan-700' },
-  { bg: 'bg-teal-100', border: 'border-teal-400', text: 'text-teal-700' },
-  { bg: 'bg-green-100', border: 'border-green-400', text: 'text-green-700' },
-  { bg: 'bg-amber-100', border: 'border-amber-400', text: 'text-amber-700' },
-  { bg: 'bg-rose-100', border: 'border-rose-400', text: 'text-rose-700' },
-  { bg: 'bg-pink-100', border: 'border-pink-400', text: 'text-pink-700' },
-  { bg: 'bg-fuchsia-100', border: 'border-fuchsia-400', text: 'text-fuchsia-700' },
-  { bg: 'bg-violet-100', border: 'border-violet-400', text: 'text-violet-700' },
-  { bg: 'bg-sky-100', border: 'border-sky-400', text: 'text-sky-700' },
-  { bg: 'bg-lime-100', border: 'border-lime-400', text: 'text-lime-700' },
-  { bg: 'bg-red-100', border: 'border-red-400', text: 'text-red-700' },
-  { bg: 'bg-yellow-100', border: 'border-yellow-400', text: 'text-yellow-700' },
-  { bg: 'bg-slate-100', border: 'border-slate-400', text: 'text-slate-700' },
+  { bg: 'bg-blue-100 dark:bg-blue-500/20', border: 'border-blue-300 dark:border-blue-500/50', text: 'text-blue-800 dark:text-blue-200' },
+  { bg: 'bg-emerald-100 dark:bg-emerald-500/20', border: 'border-emerald-300 dark:border-emerald-500/50', text: 'text-emerald-800 dark:text-emerald-200' },
+  { bg: 'bg-purple-100 dark:bg-purple-500/20', border: 'border-purple-300 dark:border-purple-500/50', text: 'text-purple-800 dark:text-purple-200' },
+  { bg: 'bg-orange-100 dark:bg-orange-500/20', border: 'border-orange-300 dark:border-orange-500/50', text: 'text-orange-800 dark:text-orange-200' },
+  { bg: 'bg-indigo-100 dark:bg-indigo-500/20', border: 'border-indigo-300 dark:border-indigo-500/50', text: 'text-indigo-800 dark:text-indigo-200' },
+  { bg: 'bg-cyan-100 dark:bg-cyan-500/20', border: 'border-cyan-300 dark:border-cyan-500/50', text: 'text-cyan-800 dark:text-cyan-200' },
+  { bg: 'bg-teal-100 dark:bg-teal-500/20', border: 'border-teal-300 dark:border-teal-500/50', text: 'text-teal-800 dark:text-teal-200' },
+  { bg: 'bg-green-100 dark:bg-green-500/20', border: 'border-green-300 dark:border-green-500/50', text: 'text-green-800 dark:text-green-200' },
+  { bg: 'bg-amber-100 dark:bg-amber-500/20', border: 'border-amber-300 dark:border-amber-500/50', text: 'text-amber-800 dark:text-amber-200' },
+  { bg: 'bg-rose-100 dark:bg-rose-500/20', border: 'border-rose-300 dark:border-rose-500/50', text: 'text-rose-800 dark:text-rose-200' },
+  { bg: 'bg-pink-100 dark:bg-pink-500/20', border: 'border-pink-300 dark:border-pink-500/50', text: 'text-pink-800 dark:text-pink-200' },
+  { bg: 'bg-fuchsia-100 dark:bg-fuchsia-500/20', border: 'border-fuchsia-300 dark:border-fuchsia-500/50', text: 'text-fuchsia-800 dark:text-fuchsia-200' },
+  { bg: 'bg-violet-100 dark:bg-violet-500/20', border: 'border-violet-300 dark:border-violet-500/50', text: 'text-violet-800 dark:text-violet-200' },
+  { bg: 'bg-sky-100 dark:bg-sky-500/20', border: 'border-sky-300 dark:border-sky-500/50', text: 'text-sky-800 dark:text-sky-200' },
+  { bg: 'bg-lime-100 dark:bg-lime-500/20', border: 'border-lime-300 dark:border-lime-500/50', text: 'text-lime-800 dark:text-lime-200' },
+  { bg: 'bg-red-100 dark:bg-red-500/20', border: 'border-red-300 dark:border-red-500/50', text: 'text-red-800 dark:text-red-200' },
+  { bg: 'bg-yellow-100 dark:bg-yellow-500/20', border: 'border-yellow-300 dark:border-yellow-500/50', text: 'text-yellow-800 dark:text-yellow-200' },
+  { bg: 'bg-slate-100 dark:bg-slate-500/20', border: 'border-slate-300 dark:border-slate-500/50', text: 'text-slate-800 dark:text-slate-200' },
 ];
 
 // Get color based on module ID
@@ -150,7 +150,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
   const availableModules: Module[] = useMemo(() => {
     return sectionGradeSubjects.map((gs: any) => {
-      const subjectName = gs.subject?.name || text('غير معروف', 'Unknown');
+      const subjectName = gs.subject?.name || text('ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ', 'Unknown');
       const gradeName = gs.grade?.name || '';
       const teacherFirstName = gs.teacher?.firstName || '';
       const teacherLastName = gs.teacher?.lastName || '';
@@ -290,8 +290,8 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
   const formatScheduleCellForExport = (item: Schedule & { module?: Module }): string => {
     const moduleName = item.module?.name || `Module #${item.gradeSubjectId}`;
-    const teacher = item.module?.teacher ? `المعلم: ${item.module.teacher}` : '';
-    const room = item.room ? `الغرفة: ${item.room}` : '';
+    const teacher = item.module?.teacher ? `Ø§Ù„Ù…Ø¹Ù„Ù…: ${item.module.teacher}` : '';
+    const room = item.room ? `Ø§Ù„ØºØ±ÙØ©: ${item.room}` : '';
     const details = [teacher, room].filter(Boolean);
 
     return details.length > 0 ? `${moduleName}\n${details.join(' | ')}` : moduleName;
@@ -332,10 +332,10 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
       // Arabic day names (in correct RTL order)
       const dayNames = hasArabic 
-        ? ['الأحد', 'السبت', 'الجمعة', 'الخميس', 'الأربعاء', 'الثلاثاء', 'الإثنين']
+        ? ['Ø§Ù„Ø£Ø­Ø¯', 'Ø§Ù„Ø³Ø¨Øª', 'Ø§Ù„Ø¬Ù…Ø¹Ø©', 'Ø§Ù„Ø®Ù…ÙŠØ³', 'Ø§Ù„Ø£Ø±Ø¨Ø¹Ø§Ø¡', 'Ø§Ù„Ø«Ù„Ø§Ø«Ø§Ø¡', 'Ø§Ù„Ø¥Ø«Ù†ÙŠÙ†']
         : DAYS;
 
-      const headerRow = [hasArabic ? 'الوقت' : 'Time', ...dayNames];
+      const headerRow = [hasArabic ? 'Ø§Ù„ÙˆÙ‚Øª' : 'Time', ...dayNames];
       const bodyRows = TIME_SLOTS.map((timeSlot) => {
         const row: string[] = [timeSlot];
         const daysToUse = hasArabic ? [...DAYS].reverse() : DAYS;
@@ -350,7 +350,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
       // Title
       const pageWidth = doc.internal.pageSize.getWidth();
       doc.setFontSize(16);
-      const title = hasArabic ? `جدول الحصص - ${sectionName}` : `Schedule - ${sectionName}`;
+      const title = hasArabic ? `Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ø­ØµØµ - ${sectionName}` : `Schedule - ${sectionName}`;
       
       if (hasArabic) {
         doc.setFont("Amiri", "normal");
@@ -363,7 +363,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
       // Subtitle
       doc.setFontSize(10);
-      const subtitle = hasArabic ? `تم الإنشاء: ${generatedAt}` : `Generated: ${generatedAt}`;
+      const subtitle = hasArabic ? `ØªÙ… Ø§Ù„Ø¥Ù†Ø´Ø§Ø¡: ${generatedAt}` : `Generated: ${generatedAt}`;
       
       if (hasArabic) {
         doc.setFont("Amiri", "normal");
@@ -416,7 +416,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
         .slice(0, 10)}.pdf`;
 
       doc.save(exportFileName);
-      toast.success(hasArabic ? 'تم تنزيل ملف PDF بنجاح' : 'Schedule PDF downloaded successfully.');
+      toast.success(hasArabic ? 'ØªÙ… ØªÙ†Ø²ÙŠÙ„ Ù…Ù„Ù PDF Ø¨Ù†Ø¬Ø§Ø­' : 'Schedule PDF downloaded successfully.');
     } catch (error) {
       console.error('Failed to export schedule PDF:', error);
       toast.error('Failed to export schedule PDF.');
@@ -428,18 +428,18 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-12 xl:gap-6">
         {/* Main Schedule Area */}
         <div className="min-w-0 xl:col-span-9">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+          <div className="rounded-xl border border-border bg-card shadow-sm">
             {/* Schedule Header */}
-            <div className="p-6 border-b border-slate-200">
+            <div className="border-b border-border p-6">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <Calendar className="w-6 h-6 text-blue-600" />
+                  <div className="rounded-lg bg-primary/15 p-3">
+                    <Calendar className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-800">{sectionName}</h2>
-                    <p className="text-sm text-slate-500 mt-1">
-                      {text('السنة الدراسية 2024-2025 • الفصل الربيعي', 'Academic Year 2024-2025 • Spring Semester')}
+                    <h2 className="text-2xl font-bold text-foreground">{sectionName}</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {text('Ø§Ù„Ø³Ù†Ø© Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠØ© 2024-2025 â€¢ Ø§Ù„ÙØµÙ„ Ø§Ù„Ø±Ø¨ÙŠØ¹ÙŠ', 'Academic Year 2024-2025 â€¢ Spring Semester')}
                     </p>
                   </div>
                 </div>
@@ -447,11 +447,11 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <Button variant="outline" className="flex items-center gap-2" onClick={handleExportPdf}>
                     <Download className="w-4 h-4" />
-                    {text('تصدير PDF', 'Export PDF')}
+                    {text('ØªØµØ¯ÙŠØ± PDF', 'Export PDF')}
                   </Button>
                   <Button onClick={() => refetch()} className="flex items-center gap-2">
                     <Save className="w-4 h-4" />
-                    {text('تحديث', 'Refresh')}
+                    {text('ØªØ­Ø¯ÙŠØ«', 'Refresh')}
                   </Button>
                 </div>
               </div>
@@ -462,11 +462,11 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
               <table className="w-full min-w-[900px] border-collapse">
                 <thead>
                   <tr>
-                    <th className="text-left p-3 text-sm font-semibold text-slate-600 bg-slate-50 border border-slate-200 w-32">
-                      {text('الوقت', 'TIME')}
+                    <th className="w-32 border border-border bg-muted/40 p-3 text-left text-sm font-semibold text-muted-foreground">
+                      {text('Ø§Ù„ÙˆÙ‚Øª', 'TIME')}
                     </th>
                     {DAYS.map(day => (
-                      <th key={day} className="text-center p-3 text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-200">
+                      <th key={day} className="border border-border bg-muted/40 p-3 text-center text-sm font-semibold text-foreground">
                         {day}
                       </th>
                     ))}
@@ -475,7 +475,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                 <tbody>
                   {TIME_SLOTS.map(timeSlot => (
                     <tr key={timeSlot}>
-                      <td className="p-3 text-sm font-medium text-slate-600 bg-slate-50 border border-slate-200 align-top">
+                      <td className="border border-border bg-muted/40 p-3 align-top text-sm font-medium text-muted-foreground">
                         {timeSlot}
                       </td>
                       {DAYS.map(day => {
@@ -486,7 +486,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                         return (
                           <td
                             key={day}
-                            className="border border-slate-200 p-2 h-24 relative drop-zone"
+                            className="relative h-24 border border-border p-2 drop-zone"
                             onDragOver={handleDragOver}
                             onDragEnter={handleDragEnter}
                             onDragLeave={handleDragLeave}
@@ -501,26 +501,26 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                                 {canDelete && (
                                   <button
                                     onClick={() => handleRemoveModule(scheduleItem.id)}
-                                    className="absolute top-1 right-1 w-5 h-5 bg-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-slate-600 hover:text-red-600 text-xs"
+                                    className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-card/90 text-xs text-muted-foreground opacity-0 shadow-sm transition-opacity hover:text-destructive group-hover:opacity-100"
                                   >
-                                    ×
+                                    Ã—
                                   </button>
                                 )}
                                 <div className={`font-semibold text-sm ${module.color.text} mb-1`}>
                                   {module.name}
                                 </div>
-                                <div className="text-xs text-slate-600 flex items-center gap-1 mb-1">
+                                <div className="mb-1 flex items-center gap-1 text-xs text-muted-foreground">
                                   <MapPin className="w-3 h-3" />
-                                  {scheduleItem.room || text('بدون غرفة', 'No room')}
+                                  {scheduleItem.room || text('Ø¨Ø¯ÙˆÙ† ØºØ±ÙØ©', 'No room')}
                                 </div>
-                                <div className="text-xs text-slate-600">
+                                <div className="text-xs text-muted-foreground">
                                   {module.teacher}
                                 </div>
                               </div>
                             ) : (
                               canCreateOrEdit && (
-                                <div className="h-full flex items-center justify-center text-slate-300 hover:text-slate-400 hover:bg-slate-50 rounded transition-colors">
-                                  <span className="text-xs">{text('أسقط هنا', 'Drop here')}</span>
+                                <div className="flex h-full items-center justify-center rounded text-muted-foreground/60 transition-colors hover:bg-muted/40 hover:text-muted-foreground">
+                                  <span className="text-xs">{text('Ø£Ø³Ù‚Ø· Ù‡Ù†Ø§', 'Drop here')}</span>
                                 </div>
                               )
                             )}
@@ -537,21 +537,21 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
 
         {/* Module Library Sidebar */}
         <div className="min-w-0 xl:col-span-3">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 xl:sticky xl:top-6">
-            <div className="p-4 border-b border-slate-200">
+          <div className="rounded-xl border border-border bg-card shadow-sm xl:sticky xl:top-6">
+            <div className="border-b border-border p-4">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-blue-600" />
-                  <h3 className="font-bold text-slate-800">{text('مكتبة الحصص', 'Module Library')}</h3>
+                  <Layers className="h-5 w-5 text-primary" />
+                  <h3 className="font-bold text-foreground">{text('Ù…ÙƒØªØ¨Ø© Ø§Ù„Ø­ØµØµ', 'Module Library')}</h3>
                 </div>
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
-                  {text('اسحب إلى الجدول', 'DRAG TO GRID')}
+                <span className="rounded-full bg-primary/15 px-2 py-1 text-xs font-medium text-primary">
+                  {text('Ø§Ø³Ø­Ø¨ Ø¥Ù„Ù‰ Ø§Ù„Ø¬Ø¯ÙˆÙ„', 'DRAG TO GRID')}
                 </span>
               </div>
               
               <Input
                 type="text"
-                placeholder={text('ابحث عن الحصص...', 'Search modules...')}
+                placeholder={text('Ø§Ø¨Ø­Ø« Ø¹Ù† Ø§Ù„Ø­ØµØµ...', 'Search modules...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -559,7 +559,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
             </div>
 
             {SUBJECT_CATEGORIES.length > 0 && (
-              <div className="p-4 border-b border-slate-200 space-y-1">
+              <div className="border-b border-border p-4 space-y-1">
                 {SUBJECT_CATEGORIES.map(category => {
                   const Icon = category.icon;
                   return (
@@ -568,8 +568,8 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                       onClick={() => setSelectedCategory(category.id)}
                       className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         selectedCategory === category.id
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-slate-600 hover:bg-slate-50'
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-muted/40'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -581,15 +581,15 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
             )}
 
             <div className="p-4">
-              <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                {text('الحصص المتاحة', 'Available Modules')} ({filteredModules.length})
+              <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {text('Ø§Ù„Ø­ØµØµ Ø§Ù„Ù…ØªØ§Ø­Ø©', 'Available Modules')} ({filteredModules.length})
               </h4>
               <div className="space-y-2 max-h-[600px] overflow-y-auto">
                 {isLoading ? (
-                  <div className="text-center py-8 text-slate-500">{text('جاري التحميل...', 'Loading...')}</div>
+                  <div className="py-8 text-center text-muted-foreground">{text('Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...', 'Loading...')}</div>
                 ) : filteredModules.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500 text-sm">
-                    {text('لا توجد حصص متاحة لهذه الشعبة', 'No modules found for this section')}
+                  <div className="py-8 text-center text-muted-foreground text-sm">
+                    {text('Ù„Ø§ ØªÙˆØ¬Ø¯ Ø­ØµØµ Ù…ØªØ§Ø­Ø© Ù„Ù‡Ø°Ù‡ Ø§Ù„Ø´Ø¹Ø¨Ø©', 'No modules found for this section')}
                   </div>
                 ) : (
                   filteredModules.map(module => (
@@ -605,12 +605,12 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                         <div className={`font-semibold text-sm ${module.color.text}`}>
                           {module.name}
                         </div>
-                        {canCreateOrEdit && <GripVertical className="w-4 h-4 text-slate-400" />}
+                        {canCreateOrEdit && <GripVertical className="h-4 w-4 text-muted-foreground" />}
                       </div>
-                      <div className="text-xs text-slate-600 space-y-1">
+                      <div className="text-xs text-muted-foreground space-y-1">
                         <div className="flex items-center gap-1">
                           <User className="w-3 h-3" />
-                          {module.teacher || text('بدون معلم', 'No teacher')}
+                          {module.teacher || text('Ø¨Ø¯ÙˆÙ† Ù…Ø¹Ù„Ù…', 'No teacher')}
                         </div>
                       </div>
                     </div>
@@ -619,16 +619,16 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-200 bg-blue-50">
+            <div className="border-t border-border bg-primary/10 p-4">
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-blue-700 text-xs">i</span>
+                <div className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-primary/20">
+                  <span className="text-xs text-primary">i</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-blue-900 mb-1">{text('نصيحة سريعة', 'Quick Tip')}</h4>
-                  <p className="text-xs text-blue-700">
+                  <h4 className="mb-1 text-sm font-semibold text-foreground">{text('Ù†ØµÙŠØ­Ø© Ø³Ø±ÙŠØ¹Ø©', 'Quick Tip')}</h4>
+                  <p className="text-xs text-muted-foreground">
                     {text(
-                      'اسحب الحصص من المكتبة وأفلتها داخل الجدول لتوزيع الحصص الدراسية.',
+                      'Ø§Ø³Ø­Ø¨ Ø§Ù„Ø­ØµØµ Ù…Ù† Ø§Ù„Ù…ÙƒØªØ¨Ø© ÙˆØ£ÙÙ„ØªÙ‡Ø§ Ø¯Ø§Ø®Ù„ Ø§Ù„Ø¬Ø¯ÙˆÙ„ Ù„ØªÙˆØ²ÙŠØ¹ Ø§Ù„Ø­ØµØµ Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠØ©.',
                       'Drag modules from the library and drop them onto the schedule grid to assign classes.'
                     )}
                   </p>
@@ -642,8 +642,8 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(open) => !open && setDeletingId(null)}
-        title={text("حذف الحصة", "Delete Schedule")}
-        description={text("هل أنت متأكد من حذف هذه الحصة؟", "Are you sure you want to delete this schedule?")}
+        title={text("Ø­Ø°Ù Ø§Ù„Ø­ØµØ©", "Delete Schedule")}
+        description={text("Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø­Ø°Ù Ù‡Ø°Ù‡ Ø§Ù„Ø­ØµØ©ØŸ", "Are you sure you want to delete this schedule?")}
         onConfirm={() => {
           if (deletingId) {
             const keyToDelete = Object.keys(schedule).find(
@@ -675,15 +675,17 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
           }
         }}
         isLoading={deleteSchedule.isPending}
-        confirmText={text("حذف", "Delete")}
+        confirmText={text("Ø­Ø°Ù", "Delete")}
       />
 
       <style>{`
         .drop-zone.drag-over {
-          background-color: #dbeafe;
-          border: 2px dashed #3b82f6;
+          background-color: hsl(var(--primary) / 0.12);
+          outline: 2px dashed hsl(var(--primary));
+          outline-offset: -2px;
         }
       `}</style>
     </>
   );
 }
+
