@@ -439,7 +439,7 @@ export function ScheduleBuilder({ sectionId, sectionName = 'Class Schedule' }: S
                   <div>
                     <h2 className="text-2xl font-bold text-foreground">{sectionName}</h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      {text('Ø§Ù„Ø³Ù†Ø© Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠØ© 2024-2025 â€¢ Ø§Ù„ÙØµÙ„ Ø§Ù„Ø±Ø¨ÙŠØ¹ÙŠ', 'Academic Year 2024-2025 â€¢ Spring Semester')}
+                      {text('السنة الدراسية 2024-2025 • الفصل الربيعي', 'Academic Year 2024-2025 • Spring Semester')}
                     </p>
                   </div>
                 </div>
