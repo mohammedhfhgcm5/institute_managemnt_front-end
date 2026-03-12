@@ -101,6 +101,13 @@ export const paymentSchema = z.object({
   notes: optionalString,
 });
 
+export const tuitionFeeSchema = z.object({
+  gradeId: z.number().int().min(1, 'الصف مطلوب'),
+  academicYear: requiredString('السنة الدراسية'),
+  annualAmount: positiveNumber('المبلغ السنوي'),
+  description: optionalString,
+});
+
 export const expenseSchema = z.object({
   title: requiredString('العنوان'),
   description: optionalString,
@@ -137,6 +144,5 @@ export const changePasswordSchema = z
     path: ['confirmPassword'],
   });
   
-
 
 

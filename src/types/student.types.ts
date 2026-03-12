@@ -1,5 +1,10 @@
+import { Attendance } from './attendance.types';
+import { Assessment } from './assessment.types';
 import { Gender, StudentStatus } from './common.types';
 import { Parent } from './parent.types';
+import { Payment } from './payment.types';
+import { Section } from './section.types';
+import { Grade } from './grade.types';
 
 export interface Student {
   id: number;
@@ -16,7 +21,12 @@ export interface Student {
   status: StudentStatus;
   createdAt: string;
   updatedAt: string;
-  parent:Parent
+  parent?: Parent;
+  section?: Section & { grade?: Grade };
+  user?: { id: number; email: string };
+  attendances?: Attendance[];
+  assessments?: Assessment[];
+  payments?: Payment[];
 }
 
 export interface CreateStudentData {

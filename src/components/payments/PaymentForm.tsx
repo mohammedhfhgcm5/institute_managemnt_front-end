@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { paymentSchema } from "@/utils/validators";
@@ -23,9 +23,10 @@ import {
 import { SearchSelect } from "@/components/ui/searchselect";
 import { useCreatePayment, useUpdatePayment } from "@/hooks/api/usePayments";
 import { useStudent, useStudents } from "@/hooks/api/useStudents";
+import { useSection } from "@/hooks/api/useSections";
+import { useTuitionFees } from "@/hooks/api/useTuitionFees";
 import { useLocale } from "@/hooks/useLocale";
 import { Payment } from "@/types/payment.types";
-import { ACADEMIC_YEARS } from "@/utils/constants";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 
@@ -60,9 +61,6 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
     search: studentQuery,
   });
 
-  const editingStudentId = payment?.studentId ?? 0;
-  const { data: editingStudent } = useStudent(editingStudentId);
-
   const {
     register,
     handleSubmit,
@@ -73,6 +71,34 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
   } = useForm<PaymentFormData>({
     resolver: zodResolver(paymentSchema),
   });
+
+  const editingStudentId = payment?.studentId ?? 0;
+  const selectedStudentId = watch("studentId") || 0;
+  const academicYearValue = watch("academicYear") || "";
+  const { data: editingStudent } = useStudent(editingStudentId);
+  const { data: selectedStudentData } = useStudent(selectedStudentId);
+  const { data: selectedSection } = useSection(selectedStudentData?.sectionId ?? 0);
+  const { data: tuitionFees } = useTuitionFees();
+
+  const fallbackGradeId =
+    (selectedStudentData as { section?: { gradeId?: number } })?.section?.gradeId ??
+    0;
+  const gradeId = selectedSection?.gradeId ?? fallbackGradeId;
+
+  const academicYearOptions = useMemo(() => {
+    if (!gradeId) return [];
+
+    return Array.from(
+      new Set(
+        (tuitionFees || [])
+          .filter((fee) => fee.gradeId === gradeId)
+          .map((fee) => fee.academicYear)
+      )
+    )
+      .filter((year) => year)
+      .sort()
+      .reverse();
+  }, [tuitionFees, gradeId]);
 
   useEffect(() => {
     if (studentsData?.data && studentQuery.trim().length > 0) {
@@ -106,7 +132,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
     } else {
       reset({
         studentId: 0,
-        academicYear: ACADEMIC_YEARS[0],
+        academicYear: "",
         amount: 0,
         discount: 0,
         status: "pending",
@@ -129,6 +155,46 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
       setStudentQuery(name);
     }
   }, [payment, editingStudent, studentQuery]);
+
+  useEffect(() => {
+    if (isEditing) return;
+    if (!selectedStudentId) return;
+
+    if (academicYearOptions.length === 0) {
+      if (academicYearValue) {
+        setValue("academicYear", "", {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+      return;
+    }
+
+    if (
+      !academicYearValue ||
+      !academicYearOptions.includes(academicYearValue)
+    ) {
+      const preferred =
+        selectedStudentData?.academicYear &&
+        academicYearOptions.includes(selectedStudentData.academicYear)
+          ? selectedStudentData.academicYear
+          : academicYearOptions[0];
+
+      if (preferred) {
+        setValue("academicYear", preferred, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    }
+  }, [
+    isEditing,
+    selectedStudentId,
+    selectedStudentData?.academicYear,
+    academicYearOptions,
+    academicYearValue,
+    setValue,
+  ]);
 
   const onSubmit = (data: PaymentFormData) => {
     if (isEditing && payment) {
@@ -179,18 +245,31 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
             <div className="space-y-2">
               <Label>{text("السنة الدراسية", "Academic Year")} *</Label>
               <Select
-                value={watch("academicYear")}
+                value={academicYearValue || undefined}
                 onValueChange={(val) => setValue("academicYear", val)}
+                disabled={!selectedStudentId || academicYearOptions.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue
+                    placeholder={
+                      selectedStudentId
+                        ? text("اختر السنة الدراسية", "Select academic year")
+                        : text("اختر الطالب أولاً", "Select student first")
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {ACADEMIC_YEARS.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}
+                  {academicYearOptions.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      {text("لا توجد سنوات للقسط", "No tuition years available")}
                     </SelectItem>
-                  ))}
+                  ) : (
+                    academicYearOptions.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               {errors.academicYear && (

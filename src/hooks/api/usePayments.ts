@@ -11,9 +11,12 @@ export const paymentKeys = {
   list: (params?: PaginationParams) => [...paymentKeys.lists(), params] as const,
   details: () => [...paymentKeys.all, 'detail'] as const,
   detail: (id: number) => [...paymentKeys.details(), id] as const,
-  byStudent: (studentId: number) =>
-    [...paymentKeys.all, 'student', studentId] as const,
-  stats: () => [...paymentKeys.all, 'stats'] as const,
+  byStudent: (studentId: number, academicYear?: string) =>
+    [...paymentKeys.all, 'student', studentId, academicYear] as const,
+  stats: (academicYear?: string) =>
+    (academicYear
+      ? [...paymentKeys.all, 'stats', academicYear]
+      : [...paymentKeys.all, 'stats']) as const,
 };
 
 export const usePayments = (params?: PaginationParams) => {
@@ -31,18 +34,18 @@ export const usePayment = (id: number) => {
   });
 };
 
-export const usePaymentsByStudent = (studentId: number) => {
+export const usePaymentsByStudent = (studentId: number, academicYear?: string) => {
   return useQuery({
-    queryKey: paymentKeys.byStudent(studentId),
-    queryFn: () => paymentService.getByStudent(studentId),
+    queryKey: paymentKeys.byStudent(studentId, academicYear),
+    queryFn: () => paymentService.getByStudent(studentId, academicYear),
     enabled: !!studentId,
   });
 };
 
-export const usePaymentStats = () => {
+export const usePaymentStats = (academicYear?: string) => {
   return useQuery({
-    queryKey: paymentKeys.stats(),
-    queryFn: () => paymentService.getStats(),
+    queryKey: paymentKeys.stats(academicYear),
+    queryFn: () => paymentService.getStats(academicYear),
   });
 };
 

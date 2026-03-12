@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentSchema } from "@/utils/validators";
@@ -24,6 +24,7 @@ import { useCreateStudent, useUpdateStudent } from "@/hooks/api/useStudents";
 import { useParents } from "@/hooks/api/useParents";
 import { useSections, useSectionsByGrade } from "@/hooks/api/useSections";
 import { useGrades } from "@/hooks/api/useGrades";
+import { useTuitionFees } from "@/hooks/api/useTuitionFees";
 import { useLocale } from "@/hooks/useLocale";
 import { Student } from "@/types/student.types";
 import { Loader2 } from "lucide-react";
@@ -48,6 +49,7 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
   const { data: gradesData } = useGrades({ page: 1, limit: 100 });
   const { data: allSectionsData } = useSections({ page: 1, limit: 200 });
   const { data: sectionsByGradeData } = useSectionsByGrade(selectedGradeId);
+  const { data: tuitionFees } = useTuitionFees();
 
   // Parent SearchSelect state
   const [parentQuery, setParentQuery] = useState("");
@@ -138,28 +140,10 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
     }
   }, [allSectionsData, student?.sectionId]);
 
-  useEffect(() => {
-    if (!selectedGradeId) {
-      setValue("academicYear", "");
-      return;
-    }
-
-    const selectedGrade = (gradesData?.data || []).find(
-      (grade) => grade.id === selectedGradeId
-    );
-    if (selectedGrade) {
-      setValue("academicYear", selectedGrade.name);
-    }
-  }, [gradesData, selectedGradeId, setValue]);
-
   const onSubmit = (data: StudentFormData) => {
-    const selectedGrade = (gradesData?.data || []).find(
-      (grade) => grade.id === selectedGradeId
-    );
-
     const payload: StudentFormData = {
       ...data,
-      academicYear: selectedGrade?.name || data.academicYear || "",
+      academicYear: data.academicYear?.trim() || undefined,
     };
 
     if (isEditing && student) {
@@ -176,6 +160,22 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
   const isPending = createStudent.isPending || updateStudent.isPending;
   const grades = gradesData?.data || [];
   const sections = sectionsByGradeData || [];
+  const academicYearValue = watch("academicYear") || "";
+
+  const academicYearOptions = useMemo(() => {
+    const years = Array.from(
+      new Set((tuitionFees || []).map((fee) => fee.academicYear))
+    )
+      .filter((year) => year)
+      .sort()
+      .reverse();
+
+    if (academicYearValue && !years.includes(academicYearValue)) {
+      return [academicYearValue, ...years];
+    }
+
+    return years;
+  }, [tuitionFees, academicYearValue]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -290,6 +290,36 @@ export function StudentForm({ open, onOpenChange, student }: StudentFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{text("السنة الدراسية", "Academic Year")}</Label>
+              <Select
+                value={academicYearValue || undefined}
+                onValueChange={(val) => setValue("academicYear", val)}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={text("اختر السنة الدراسية", "Select academic year")}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {academicYearOptions.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      {text("لا توجد سنوات متاحة", "No academic years available")}
+                    </SelectItem>
+                  ) : (
+                    academicYearOptions.map((year) => (
+                      <SelectItem key={year} value={year}>
+                        {year}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              {errors.academicYear && (
+                <p className="text-sm text-destructive">{errors.academicYear.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">

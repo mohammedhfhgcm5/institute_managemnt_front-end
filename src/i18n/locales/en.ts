@@ -484,4 +484,9 @@ export const enTranslations = {
   Version: "Version",
   "View all notifications": "View all notifications",
   Warning: "Warning",
+  StudentPayments:"Student Payments",
+  RecentAssessments: "Recent Assessments",
+  RecentAttendance: "Recent Attendance",
+  Remaining :"Remaining",
+  AnnualTuition:"Annual Tuition"
 };

@@ -6,6 +6,7 @@ import {
   CreatePaymentData,
   UpdatePaymentData,
   PaymentStats,
+  PaymentsByStudentResponse,
 } from '@/types/payment.types';
 
 export const paymentService = {
@@ -24,11 +25,22 @@ export const paymentService = {
     return response.data.data;
   },
 
-  getByStudent: async (studentId: number): Promise<Payment[]> => {
-    const response = await apiClient.get<ApiResponse<Payment[]>>(
-      ENDPOINTS.PAYMENTS_BY_STUDENT(studentId)
+  getByStudent: async (
+    studentId: number,
+    academicYear?: string
+  ): Promise<PaymentsByStudentResponse> => {
+    const response = await apiClient.get<ApiResponse<Payment[] | PaymentsByStudentResponse>>(
+      ENDPOINTS.PAYMENTS_BY_STUDENT(studentId),
+      { params: academicYear ? { academicYear } : undefined }
     );
-    return response.data.data;
+    const data = response.data.data;
+    if (Array.isArray(data)) {
+      return { payments: data };
+    }
+    if (!data || !Array.isArray((data as PaymentsByStudentResponse).payments)) {
+      return { payments: [] };
+    }
+    return data as PaymentsByStudentResponse;
   },
 
   create: async (data: CreatePaymentData): Promise<Payment> => {
@@ -51,9 +63,10 @@ export const paymentService = {
     await apiClient.delete(ENDPOINTS.PAYMENT_BY_ID(id));
   },
 
-  getStats: async (): Promise<PaymentStats> => {
+  getStats: async (academicYear?: string): Promise<PaymentStats> => {
     const response = await apiClient.get<ApiResponse<PaymentStats>>(
-      ENDPOINTS.PAYMENT_STATS
+      ENDPOINTS.PAYMENT_STATS,
+      { params: academicYear ? { academicYear } : undefined }
     );
     return response.data.data;
   },

@@ -8,6 +8,7 @@ const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
 const ProfilePage = lazy(() => import("@/pages/auth/ProfilePage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
 const StudentsPage = lazy(() => import("@/pages/StudentsPage"));
+const StudentDetailPage = lazy(() => import("@/pages/StudentDetailPage"));
 const TeachersPage = lazy(() => import("@/pages/TeachersPage"));
 const ParentsPage = lazy(() => import("@/pages/ParentsPage"));
 const CoursesPage = lazy(() => import("@/pages/CoursesPage"));
@@ -18,6 +19,7 @@ const AssessmentPage = lazy(() => import("@/pages/AssessmentPage"));
 const AttendancePage = lazy(() => import("@/pages/AttendancePage"));
 const GradesPage = lazy(() => import("@/pages/GradesPage"));
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
+const TuitionFeesPage = lazy(() => import("@/pages/TuitionFeesPage"));
 const ExpensesPage = lazy(() => import("@/pages/ExpensesPage"));
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
@@ -45,6 +47,7 @@ export default function AppRoutes() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/students" element={<StudentsPage />} />
+        <Route path="/students/:id" element={<StudentDetailPage />} />
         <Route path="/teachers" element={<TeachersPage />} />
         <Route path="/parents" element={<ParentsPage />} />
         <Route path="/courses" element={<CoursesPage />} />
@@ -55,6 +58,7 @@ export default function AppRoutes() {
         <Route path="/attendance" element={<AttendancePage />} />
         <Route path="/grades" element={<GradesPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/tuition-fees" element={<TuitionFeesPage />} />
         <Route path="/expenses" element={<ExpensesPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/reports" element={<ReportsPage />} />

@@ -54,6 +54,12 @@ ASSESSMENTS_BY_STUDENT: (studentId: number) => `/assessments/student/${studentId
   PAYMENT_STATS: '/payments/stats',
   PAYMENTS_BY_STUDENT: (studentId: number) => `/payments/student/${studentId}`,
 
+  TUITION_FEES: '/tuition-fees',
+  TUITION_FEE_BY_ID: (id: number) => `/tuition-fees/${id}`,
+  TUITION_FEES_BY_GRADE: (gradeId: number) => `/tuition-fees/grade/${gradeId}`,
+  TUITION_FEE_STUDENT_BALANCE: (studentId: number) =>
+    `/tuition-fees/student/${studentId}/balance`,
+
   EXPENSES: '/expenses',
   EXPENSE_BY_ID: (id: number) => `/expenses/${id}`,
   EXPENSE_STATS: '/expenses/stats',

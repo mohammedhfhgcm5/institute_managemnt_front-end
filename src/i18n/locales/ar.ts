@@ -474,4 +474,10 @@ export const arTranslations = {
   Version: "الإصدار",
   "View all notifications": "عرض جميع الإشعارات",
   Warning: "تحذير",
+  StudentPayments:"دفعات الطالب",
+  RecentAssessments: "آخر التقييمات",
+  RecentAttendance: "آخر الحضور",
+  Remaining: "المتبقي",
+  AnnualTuition: "القسط السنوي"
+
 };

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStudents, useDeleteStudent } from '@/hooks/api/useStudents';
 import { DataTable, Column } from '@/components/common/DataTable';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import { StudentForm } from './StudentForm';
 
 export function StudentList() {
   const { text } = useLocale();
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -106,6 +108,7 @@ export function StudentList() {
         searchValue={search}
         onSearchChange={setSearch}
         searchPlaceholder={text('ابحث عن الطلاب...', 'Search students...')}
+        onRowDoubleClick={(student) => navigate(`/students/${student.id}`)}
         actions={
           <Button onClick={() => { setEditingStudent(null); setFormOpen(true); }} className="gap-2">
             <Plus className="h-4 w-4" />

@@ -34,3 +34,14 @@ export interface PaymentStats {
   totalPending: number;
   totalPartial: number;
 }
+
+export interface PaymentBalanceSummary {
+  annualAmount: number;
+  totalPaid: number;
+  remainingAmount: number;
+}
+
+export interface PaymentsByStudentResponse {
+  payments: Payment[];
+  balance?: PaymentBalanceSummary;
+}
