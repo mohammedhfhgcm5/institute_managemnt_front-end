@@ -27,6 +27,14 @@ export const userService = {
     return response.data.data;
   },
 
+  createReceptionAccount: async (data: CreateUserData): Promise<UserProfile> => {
+    const response = await apiClient.post<ApiResponse<UserProfile>>(
+      ENDPOINTS.USERS.RECEPTION_CREATE,
+      data
+    );
+    return response.data.data;
+  },
+
   update: async (id: number, data: UpdateUserData): Promise<UserProfile> => {
     const response = await apiClient.patch<ApiResponse<UserProfile>>(
       ENDPOINTS.USERS.USER_BY_ID(id),

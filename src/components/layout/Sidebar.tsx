@@ -41,119 +41,126 @@ interface NavItem {
 }
 
 const navGroups = {
-  core: { ar: "الرئيسية", en: "Core" },
-  people: { ar: "الأشخاص", en: "People" },
-  academic: { ar: "أكاديمي", en: "Academic" },
-  finance: { ar: "المالية", en: "Finance" },
-  system: { ar: "النظام", en: "System" },
+  core: { ar: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", en: "Core" },
+  people: { ar: "Ø§Ù„Ø£Ø´Ø®Ø§Øµ", en: "People" },
+  academic: { ar: "Ø£ÙƒØ§Ø¯ÙŠÙ…ÙŠ", en: "Academic" },
+  finance: { ar: "Ø§Ù„Ù…Ø§Ù„ÙŠØ©", en: "Finance" },
+  system: { ar: "Ø§Ù„Ù†Ø¸Ø§Ù…", en: "System" },
 };
 
 const navItems: NavItem[] = [
   {
-    title: { ar: "لوحة التحكم", en: "Dashboard" },
+    title: { ar: "Ù„ÙˆØ­Ø© Ø§Ù„ØªØ­ÙƒÙ…", en: "Dashboard" },
     href: "/",
     icon: LayoutDashboard,
     group: "core",
   },
   {
-    title: { ar: "الطلاب", en: "Students" },
+    title: { ar: "Ø§Ù„Ø·Ù„Ø§Ø¨", en: "Students" },
     href: "/students",
     icon: GraduationCap,
     permission: "canManageStudents",
     group: "people",
   },
   {
-    title: { ar: "المعلمون", en: "Teachers" },
+    title: { ar: "Ø§Ù„Ù…Ø¹Ù„Ù…ÙˆÙ†", en: "Teachers" },
     href: "/teachers",
     icon: Users,
     permission: "canManageTeachers",
     group: "people",
   },
   {
-    title: { ar: "أولياء الأمور", en: "Parents" },
+    title: { ar: "Ø£ÙˆÙ„ÙŠØ§Ø¡ Ø§Ù„Ø£Ù…ÙˆØ±", en: "Parents" },
     href: "/parents",
     icon: UserCircle,
     permission: "canManageParents",
     group: "people",
   },
   {
-    title: { ar: "المواد الدراسية", en: "Subjects" },
+    title: { ar: "الاستقبال", en: "Reception" },
+    href: "/reception",
+    icon: Users,
+    permission: "isAdmin",
+    group: "people",
+  },
+  {
+    title: { ar: "Ø§Ù„Ù…ÙˆØ§Ø¯ Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠØ©", en: "Subjects" },
     href: "/courses",
     icon: BookOpen,
     permission: "canManageCourses",
     group: "academic",
   },
   {
-    title: { ar: "الشعب", en: "Sections" },
+    title: { ar: "Ø§Ù„Ø´Ø¹Ø¨", en: "Sections" },
     href: "/sections",
     icon: Building2,
     permission: "canManageAttendance",
     group: "academic",
   },
   {
-    title: { ar: "الجداول", en: "Schedules" },
+    title: { ar: "Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„", en: "Schedules" },
     href: "/schedules",
     icon: CalendarDays,
     permission: "canManageAttendance",
     group: "academic",
   },
   {
-    title: { ar: "التقييمات", en: "Assessments" },
+    title: { ar: "Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª", en: "Assessments" },
     href: "/assessments",
     icon: ClipboardList,
     permission: "canManageGrades",
     group: "academic",
   },
   {
-    title: { ar: "الحضور", en: "Attendance" },
+    title: { ar: "Ø§Ù„Ø­Ø¶ÙˆØ±", en: "Attendance" },
     href: "/attendance",
     icon: ClipboardCheck,
     permission: "canManageAttendance",
     group: "academic",
   },
   {
-    title: { ar: "الصفوف", en: "Grades" },
+    title: { ar: "Ø§Ù„ØµÙÙˆÙ", en: "Grades" },
     href: "/grades",
     icon: FileSpreadsheet,
     permission: "canManageGrades",
     group: "academic",
   },
   {
-    title: { ar: "المدفوعات", en: "Payments" },
+    title: { ar: "Ø§Ù„Ù…Ø¯ÙÙˆØ¹Ø§Øª", en: "Payments" },
     href: "/payments",
     icon: CreditCard,
     permission: "canManagePayments",
     group: "finance",
   },
   {
-    title: { ar: "الأقساط", en: "Tuition Fees" },
+    title: { ar: "Ø§Ù„Ø£Ù‚Ø³Ø§Ø·", en: "Tuition Fees" },
     href: "/tuition-fees",
     icon: Wallet,
     permission: "canManagePayments",
     group: "finance",
   },
   {
-    title: { ar: "المصروفات", en: "Expenses" },
+    title: { ar: "Ø§Ù„Ù…ØµØ±ÙˆÙØ§Øª", en: "Expenses" },
     href: "/expenses",
     icon: Receipt,
     permission: "canManageExpenses",
     group: "finance",
   },
   {
-    title: { ar: "الإشعارات", en: "Notifications" },
+    title: { ar: "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª", en: "Notifications" },
     href: "/notifications",
     icon: Bell,
     group: "system",
   },
   {
-    title: { ar: "التقارير", en: "Reports" },
+    title: { ar: "Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±", en: "Reports" },
     href: "/reports",
     icon: BarChart3,
     permission: "canManageReports",
     group: "system",
   },
   {
-    title: { ar: "الإعدادات", en: "Settings" },
+    title: { ar: "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª", en: "Settings" },
     href: "/settings",
     icon: Settings,
     group: "system",
@@ -186,7 +193,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     leaveTimer.current = setTimeout(() => setHovered(false), 220);
   }, []);
 
-  // Proximity detection — mouse within PEEK_PX of the sidebar edge triggers expand
+  // Proximity detection â€” mouse within PEEK_PX of the sidebar edge triggers expand
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (pinned) return;
@@ -218,7 +225,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   const innerContent = (expanded: boolean, mobile: boolean) => (
     <>
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div className="relative flex h-16 items-center border-b border-border/60 px-3 gap-2 flex-shrink-0 overflow-hidden">
         {/* Logo mark */}
         <div
@@ -244,10 +251,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           }}
         >
           <h1 className="text-[13px] font-bold tracking-tight text-foreground leading-none truncate">
-            {text("إدارة المدرسة", "School Admin")}
+            {text("Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø¯Ø±Ø³Ø©", "School Admin")}
           </h1>
           <p className="text-[10px] text-muted-foreground mt-0.5 tracking-wider uppercase truncate">
-            {text("نظام متكامل", "Management System")}
+            {text("Ù†Ø¸Ø§Ù… Ù…ØªÙƒØ§Ù…Ù„", "Management System")}
           </p>
         </div>
 
@@ -286,7 +293,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
       </div>
 
-      {/* ── Nav ── */}
+      {/* â”€â”€ Nav â”€â”€ */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2">
         {groupedItems.map(({ key, label, items }) => {
           const groupCollapsed = collapsedGroups[key];
@@ -415,7 +422,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      {/* ── Status strip ── */}
+      {/* â”€â”€ Status strip â”€â”€ */}
       <div
         className="border-t border-border/60 flex items-center flex-shrink-0 overflow-hidden"
         style={{
@@ -439,7 +446,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               "max-width 220ms ease, opacity 180ms ease, margin 220ms ease",
           }}
         >
-          {text("النظام يعمل", "System Online")}
+          {text("Ø§Ù„Ù†Ø¸Ø§Ù… ÙŠØ¹Ù…Ù„", "System Online")}
         </span>
       </div>
     </>
@@ -447,7 +454,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* ── Mobile backdrop ── */}
+      {/* â”€â”€ Mobile backdrop â”€â”€ */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
@@ -455,7 +462,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         />
       )}
 
-      {/* ── Desktop hover sidebar ── */}
+      {/* â”€â”€ Desktop hover sidebar â”€â”€ */}
       {/* Wrapper width follows sidebar open/collapse state */}
       <div
         className="hidden h-dvh flex-shrink-0 transition-[width] duration-300 ease-out lg:block"
@@ -483,7 +490,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </aside>
       </div>
 
-      {/* ── Mobile slide-in sidebar ── */}
+      {/* â”€â”€ Mobile slide-in sidebar â”€â”€ */}
       <aside
         className={cn(
           "fixed top-0 z-50 h-full flex flex-col lg:hidden",

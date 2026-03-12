@@ -55,6 +55,19 @@ export const parentSchema = z.object({
   }),
 });
 
+export const receptionSchema = z.object({
+  firstName: requiredString('Ø§Ù„Ø§Ø³Ù… Ø§Ù„Ø£ÙˆÙ„'),
+  lastName: requiredString('Ø§Ø³Ù… Ø§Ù„Ø¹Ø§Ø¦Ù„Ø©'),
+  phone: z.string().min(1, 'Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…Ø·Ù„ÙˆØ¨'),
+  email: emailSchema,
+});
+
+export const receptionAccountSchema = z.object({
+  email: emailSchema,
+  phone: phoneSchema,
+  password: z.string().min(6, 'ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙŠØ¬Ø¨ Ø£Ù† ØªÙƒÙˆÙ† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„'),
+});
+
 export const courseSchema = z.object({
   name: requiredString('اسم المادة'),
   description: optionalString,
@@ -144,5 +157,3 @@ export const changePasswordSchema = z
     path: ['confirmPassword'],
   });
   
-
-

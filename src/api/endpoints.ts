@@ -6,11 +6,11 @@ export const ENDPOINTS = {
     CHANGE_PASSWORD: '/auth/change-password',
   },
 
-   USERS :
-   {
-      USERS: '/users',
-      USER_BY_ID: (id: number) => `/users/${id}`,
-   },
+  USERS: {
+    USERS: '/users',
+    USER_BY_ID: (id: number) => `/users/${id}`,
+    RECEPTION_CREATE: '/users/reception',
+  },
 
 
   STUDENTS: '/students',
@@ -27,6 +27,9 @@ ASSESSMENTS_BY_STUDENT: (studentId: number) => `/assessments/student/${studentId
 
   PARENTS: '/parents',
   PARENT_BY_ID: (id: number) => `/parents/${id}`,
+
+  RECEPTION: '/reception',
+  RECEPTION_BY_ID: (id: number) => `/reception/${id}`,
 
   SUBJECTS: '/subjects',
   SUBJECT_BY_ID: (id: number) => `/subjects/${id}`,

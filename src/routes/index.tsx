@@ -11,6 +11,7 @@ const StudentsPage = lazy(() => import("@/pages/StudentsPage"));
 const StudentDetailPage = lazy(() => import("@/pages/StudentDetailPage"));
 const TeachersPage = lazy(() => import("@/pages/TeachersPage"));
 const ParentsPage = lazy(() => import("@/pages/ParentsPage"));
+const ReceptionPage = lazy(() => import("@/pages/ReceptionPage"));
 const CoursesPage = lazy(() => import("@/pages/CoursesPage"));
 const SectionsPage = lazy(() => import("@/pages/SectionsPage"));
 const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
@@ -50,6 +51,7 @@ export default function AppRoutes() {
         <Route path="/students/:id" element={<StudentDetailPage />} />
         <Route path="/teachers" element={<TeachersPage />} />
         <Route path="/parents" element={<ParentsPage />} />
+        <Route path="/reception" element={<ReceptionPage />} />
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/sections" element={<SectionsPage />} />
         <Route path="/schedules" element={<SchedulePage />} />

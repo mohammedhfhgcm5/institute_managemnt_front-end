@@ -488,5 +488,21 @@ export const enTranslations = {
   RecentAssessments: "Recent Assessments",
   RecentAttendance: "Recent Attendance",
   Remaining :"Remaining",
-  AnnualTuition:"Annual Tuition"
+  AnnualTuition:"Annual Tuition",
+  Account: "Account",
+  "Account already linked": "Account already linked",
+  "Add Reception": "Add Reception",
+  "Create Account": "Create Account",
+  "Create Reception Account": "Create Reception Account",
+  "Delete Reception": "Delete Reception",
+  "Edit Reception": "Edit Reception",
+  "Email must match the reception profile.": "Email must match the reception profile.",
+  Linked: "Linked",
+  "Not linked": "Not linked",
+  "Reception Management": "Reception Management",
+  "Reception account created successfully": "Reception account created successfully",
+  "Reception created successfully": "Reception created successfully",
+  "Reception deleted successfully": "Reception deleted successfully",
+  "Reception updated successfully": "Reception updated successfully",
+  "Search reception...": "Search reception..."
 };
