@@ -1,6 +1,8 @@
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { loadAmiriFont } from '@/fonts/amiriFont';
+import { containsArabic } from '@/utils/pdfArabicFont';
 
 interface ReportData {
   [key: string]: any;
@@ -58,6 +60,34 @@ function formatFieldName(field: string): string {
   return field
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function detectArabicInValue(value: unknown): boolean {
+  if (typeof value === 'string') {
+    return containsArabic(value);
+  }
+  if (Array.isArray(value)) {
+    return value.some(detectArabicInValue);
+  }
+  if (value && typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>).some(detectArabicInValue);
+  }
+  return false;
+}
+
+function normalizePdfText(value: unknown, _isRtl: boolean): string {
+  const text = value === null || value === undefined ? '' : String(value);
+  return text;
+}
+
+function containsArabicInText(text: unknown): boolean {
+  if (typeof text === 'string') {
+    return containsArabic(text);
+  }
+  if (Array.isArray(text)) {
+    return text.some(containsArabicInText);
+  }
+  return false;
 }
 
 /**
@@ -209,11 +239,46 @@ export async function exportJsonToPdf(
   data: ReportData,
   fileBaseName: string
 ): Promise<void> {
+  const hasArabic = containsArabic(title) || detectArabicInValue(data);
+
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
   });
+
+  if (hasArabic) {
+    try {
+      await loadAmiriFont(doc);
+    } catch (error) {
+      console.error('Failed to load Arabic font:', error);
+    }
+  }
+
+  if (hasArabic) {
+    const originalText = doc.text.bind(doc);
+
+    (doc as any).text = (text: any, x: any, y: any, options?: any, transform?: any) => {
+      if (!containsArabicInText(text)) {
+        return originalText(text, x, y, options as any, transform as any);
+      }
+
+      const nextOptions =
+        options && typeof options === 'object' && !Array.isArray(options)
+          ? { ...options }
+          : {};
+
+      // Let jsPDF's bidi engine handle logical RTL input.
+      nextOptions.isInputVisual = false;
+      nextOptions.isOutputVisual = true;
+      return originalText(text, x, y, nextOptions as any, transform as any);
+    };
+  }
+
+  const pdfFont = hasArabic ? 'Amiri' : 'helvetica';
+  const titleFontStyle = hasArabic ? 'normal' : 'bold';
+  const timestampFontStyle = hasArabic ? 'normal' : 'italic';
+  const textAlign = hasArabic ? 'right' : 'left';
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 15;
@@ -221,45 +286,60 @@ export async function exportJsonToPdf(
   // Title
   doc.setFontSize(24);
   doc.setTextColor(31, 78, 120); // #1F4E78
-  doc.setFont('helvetica', 'bold');
-  doc.text(title, margin, 20);
+  doc.setFont(pdfFont, titleFontStyle);
+  const titleText = normalizePdfText(title, hasArabic);
+  const titleX = hasArabic ? pageWidth - margin : margin;
+  doc.text(titleText, titleX, 20, { align: textAlign });
 
   // Timestamp
   doc.setFontSize(10);
   doc.setTextColor(102, 102, 102); // #666666
-  doc.setFont('helvetica', 'italic');
-  doc.text(`Generated: ${new Date().toLocaleString()}`, margin, 28);
+  doc.setFont(pdfFont, timestampFontStyle);
+  const generatedAt = new Date().toLocaleString(hasArabic ? 'ar' : undefined);
+  const timestampText = normalizePdfText(`Generated: ${generatedAt}`, hasArabic);
+  doc.text(timestampText, titleX, 28, { align: textAlign });
 
   const structure = detectStructure(data);
 
   if (structure === 'table') {
     // Tabular data
     const tableData = data as any[];
-    const headers = Object.keys(tableData[0]).map(formatFieldName);
+    const headers = Object.keys(tableData[0]).map((header) =>
+      normalizePdfText(formatFieldName(header), hasArabic)
+    );
     const rows = tableData.map((row) =>
-      Object.keys(tableData[0]).map((key) => row[key] ?? '')
+      Object.keys(tableData[0]).map((key) =>
+        normalizePdfText(row[key] ?? '', hasArabic)
+      )
     );
 
     doc.setFontSize(14);
     doc.setTextColor(31, 78, 120);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Report Data', margin, 40);
+    doc.setFont(pdfFont, titleFontStyle);
+    const reportDataLabel = normalizePdfText('Report Data', hasArabic);
+    doc.text(reportDataLabel, titleX, 40, { align: textAlign });
 
     autoTable(doc, {
       startY: 45,
       head: [headers],
       body: rows,
       theme: 'grid',
+      styles: {
+        font: pdfFont,
+        halign: textAlign,
+      },
       headStyles: {
         fillColor: [54, 96, 146], // #366092
         textColor: [255, 255, 255],
         fontSize: 10,
-        fontStyle: 'bold',
+        fontStyle: titleFontStyle,
         halign: 'center',
+        font: pdfFont,
       },
       bodyStyles: {
         fontSize: 9,
         textColor: [0, 0, 0],
+        font: pdfFont,
       },
       alternateRowStyles: {
         fillColor: [249, 249, 249], // #F9F9F9
@@ -271,40 +351,52 @@ export async function exportJsonToPdf(
     // Key-value pairs
     const flatData = flattenData(data);
     const rows = Object.entries(flatData).map(([key, value]) => [
-      formatFieldName(key),
-      value ?? '',
+      normalizePdfText(formatFieldName(key), hasArabic),
+      normalizePdfText(value ?? '', hasArabic),
     ]);
 
     doc.setFontSize(14);
     doc.setTextColor(31, 78, 120);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Report Summary', margin, 40);
+    doc.setFont(pdfFont, titleFontStyle);
+    const reportSummaryLabel = normalizePdfText('Report Summary', hasArabic);
+    doc.text(reportSummaryLabel, titleX, 40, { align: textAlign });
 
     autoTable(doc, {
       startY: 45,
-      head: [['Field', 'Value']],
+      head: [[
+        normalizePdfText('Field', hasArabic),
+        normalizePdfText('Value', hasArabic),
+      ]],
       body: rows,
       theme: 'grid',
+      styles: {
+        font: pdfFont,
+        halign: textAlign,
+      },
       headStyles: {
         fillColor: [54, 96, 146], // #366092
         textColor: [255, 255, 255],
         fontSize: 11,
-        fontStyle: 'bold',
+        fontStyle: titleFontStyle,
         halign: 'center',
+        font: pdfFont,
       },
       bodyStyles: {
         fontSize: 9,
         textColor: [0, 0, 0],
+        font: pdfFont,
       },
       columnStyles: {
         0: { 
           cellWidth: 75,
-          fontStyle: 'bold',
+          fontStyle: titleFontStyle,
           textColor: [31, 78, 120],
           fillColor: [242, 242, 242],
+          font: pdfFont,
         },
         1: { 
           cellWidth: 'auto',
+          font: pdfFont,
         },
       },
       alternateRowStyles: {

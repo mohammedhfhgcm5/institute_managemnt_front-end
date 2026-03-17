@@ -159,9 +159,9 @@ export default function ReportsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="attendance">{text('تقرير حضور', 'Attendance Report')}</SelectItem>
-                  <SelectItem value="financial">{text('تقرير مالي', 'Financial Report')}</SelectItem>
-                  <SelectItem value="performance">{text('تقرير أداء', 'Performance Report')}</SelectItem>
+                  <SelectItem value="attendance">{text('تقرير حضور', 'AttendanceReport')}</SelectItem>
+                  <SelectItem value="financial">{text('تقرير مالي', 'FinancialReport')}</SelectItem>
+                  <SelectItem value="performance">{text('تقرير أداء', 'PerformanceReport')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
