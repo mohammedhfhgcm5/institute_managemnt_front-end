@@ -198,21 +198,10 @@ export function ScheduleList() {
         searchPlaceholder={text("ابحث عن جدول...", "Search schedules...")}
         actions={
           <div className="flex gap-2">
-            {canCreateOrEdit && (
-              <Button
-                onClick={() => {
-                  setEditingSchedule(null);
-                  setFormOpen(true);
-                }}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {text("إضافة حصة", "Add Schedule")}
-              </Button>
-            )}
+            
             <Button variant="outline" onClick={() => navigate("/schedules/builder")}>
               <LayoutGrid className="mr-2 h-4 w-4" />
-              {text("عرض المُنشئ", "Builder View")}
+              {text("جدول الدوام", "Builder View")}
             </Button>
           </div>
         }

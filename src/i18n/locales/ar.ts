@@ -85,7 +85,7 @@ export const arTranslations = {
   Average: "المعدل",
   "Back to Schedules": "العودة للجداول",
   Bio: "السيرة الذاتية",
-  "Builder View": "عرض المُنشئ",
+  "Builder View": "جدول الدوام",
   "Bulk Assessment Scores": "إدخال درجات التقييم دفعة واحدة",
   "Bulk Attendance": "تسجيل حضور جماعي",
   "Bulk attendance has been saved": "تم حفظ الحضور الجماعي",

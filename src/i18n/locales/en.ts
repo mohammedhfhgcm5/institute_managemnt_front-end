@@ -89,7 +89,7 @@ export const enTranslations = {
   Average: "Average",
   "Back to Schedules": "Back to Schedules",
   Bio: "Bio",
-  "Builder View": "Builder View",
+  "Builder View": "schedule Table",
   "Bulk Assessment Scores": "Bulk Assessment Scores",
   "Bulk Attendance": "Bulk Attendance",
   "Bulk attendance has been saved": "Bulk attendance has been saved",
