@@ -16,7 +16,7 @@ export const paymentKeys = {
   stats: (academicYear?: string) =>
     (academicYear
       ? [...paymentKeys.all, 'stats', academicYear]
-      : [...paymentKeys.all, 'stats']) as const,
+      : [...paymentKeys.all, 'stats']) ,
 };
 
 export const usePayments = (params?: PaginationParams) => {
