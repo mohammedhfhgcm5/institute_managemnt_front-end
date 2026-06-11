@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -176,6 +177,20 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
   const permissions = usePermissions();
   const { isArabic, text } = useLocale();
+  const { user } = useAuth();
+  const organization = user?.organization;
+  const organizationType = organization
+    ? isArabic
+      ? organization.typeAr ||
+        (organization.type === "institute" ? "معهد" : "مدرسة")
+      : organization.typeEn ||
+        (organization.type === "institute" ? "Institute" : "School")
+    : text("نظام متكامل", "Management System");
+  const organizationName = organization
+    ? isArabic
+      ? organization.nameAr || organization.name
+      : organization.nameEn || organization.name
+    : text("إدارة المدرسة", "School Admin");
 
   const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -229,15 +244,26 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="relative flex h-16 items-center border-b border-border/60 px-3 gap-2 flex-shrink-0 overflow-hidden">
         {/* Logo mark */}
         <div
-          className="relative flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-xl overflow-hidden"
+          className="relative flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden border border-border/60"
           style={{
-            background:
-              "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.7) 100%)",
+            background: organization?.logo
+              ? "hsl(var(--card))"
+              : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.7) 100%)",
             boxShadow: "0 4px 14px hsl(var(--primary)/.35)",
           }}
         >
-          <GraduationCap className="h-4 w-4 text-primary-foreground" />
-          <div className="absolute inset-0 opacity-25 bg-gradient-to-br from-white to-transparent" />
+          {organization?.logo ? (
+            <img
+              src={organization.logo}
+              alt={organizationName}
+              className="h-full w-full object-contain p-0.5"
+            />
+          ) : (
+            <>
+              <GraduationCap className="h-4 w-4 text-primary-foreground" />
+              <div className="absolute inset-0 opacity-25 bg-gradient-to-br from-white to-transparent" />
+            </>
+          )}
         </div>
 
         {/* Title */}
@@ -251,10 +277,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           }}
         >
           <h1 className="text-[13px] font-bold tracking-tight text-foreground leading-none truncate">
-            {text("إدارة المدرسة", "School Admin")}
+            {organizationName}
           </h1>
           <p className="text-[10px] text-muted-foreground mt-0.5 tracking-wider uppercase truncate">
-            {text("نظام متكامل", "Management System")}
+            {organizationType}
           </p>
         </div>
 

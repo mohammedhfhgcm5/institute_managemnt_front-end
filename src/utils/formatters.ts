@@ -16,12 +16,14 @@ export function formatDateTime(dateStr: string): string {
   return formatDate(dateStr, 'dd/MM/yyyy HH:mm');
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat(isArabic() ? 'ar-SA' : 'en-US', {
-    style: 'currency',
-    currency: 'SAR',
-    minimumFractionDigits: 0,
+export function formatCurrency(
+  amount: number,
+  currency: 'SYP' | 'USD' = 'SYP'
+): string {
+  const formatted = new Intl.NumberFormat(isArabic() ? 'ar-SY' : 'en-US', {
+    maximumFractionDigits: currency === 'SYP' ? 0 : 2,
   }).format(amount);
+  return currency === 'SYP' ? `${formatted} ل.س` : `$${formatted}`;
 }
 
 export function formatNumber(num: number): string {

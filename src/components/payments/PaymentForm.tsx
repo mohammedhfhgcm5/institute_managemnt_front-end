@@ -114,6 +114,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
         studentId: payment.studentId,
         academicYear: payment.academicYear,
         amount: payment.amount,
+        currency: payment.currency || "SYP",
         discount: payment.discount,
         status: payment.status,
         dueDate: payment.dueDate,
@@ -134,6 +135,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
         studentId: 0,
         academicYear: "",
         amount: 0,
+        currency: "SYP",
         discount: 0,
         status: "pending",
         dueDate: "",
@@ -212,13 +214,13 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEditing ? text("تعديل الدفعة", "Edit Payment") : text("إضافة دفعة", "Add Payment")}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="space-y-2">
               <SearchSelect
                 label={text("الطالب", "Student")}
@@ -278,7 +280,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>{text("المبلغ", "Amount")} *</Label>
               <Input type="number" {...register("amount", { valueAsNumber: true })} />
@@ -287,9 +289,31 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
               )}
             </div>
             <div className="space-y-2">
-              <Label>{text("الخصم", "Discount")}</Label>
-              <Input type="number" {...register("discount", { valueAsNumber: true })} />
+              <Label>{text("العملة", "Currency")}</Label>
+              <Select
+                value={watch("currency") || "SYP"}
+                onValueChange={(value) =>
+                  setValue("currency", value as PaymentFormData["currency"])
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SYP">
+                    {text("ليرة سورية (ل.س)", "Syrian Pound (SYP)")}
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    {text("دولار أمريكي ($)", "US Dollar ($)")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>{text("الخصم", "Discount")}</Label>
+            <Input type="number" {...register("discount", { valueAsNumber: true })} />
           </div>
 
           <div className="space-y-2">
@@ -309,7 +333,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
             </Select>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="space-y-2">
               <Label>{text("تاريخ الاستحقاق", "Due Date")} *</Label>
               <Input type="date" {...register("dueDate")} />
@@ -325,7 +349,7 @@ export function PaymentForm({ open, onOpenChange, payment }: PaymentFormProps) {
 
           <div className="space-y-2">
             <Label>{text("الملاحظات", "Notes")}</Label>
-            <Textarea {...register("notes")} rows={2} />
+            <Textarea {...register("notes")} rows={1} />
           </div>
 
           <DialogFooter>

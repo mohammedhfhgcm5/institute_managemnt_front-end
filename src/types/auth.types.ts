@@ -1,4 +1,4 @@
-import { UserRole } from './common.types';
+import { UserRole } from "./common.types";
 
 export interface LoginCredentials {
   email: string;
@@ -17,6 +17,25 @@ export interface AuthUser {
   email: string;
   phone?: string;
   role: UserRole;
+  organizationId?: number | null;
+  organization?: {
+    id: number;
+    name: string;
+    nameAr?: string | null;
+    nameEn?: string | null;
+    type: string;
+    typeAr?: string | null;
+    typeEn?: string | null;
+    slug?: string;
+    logo?: string | null;
+    isActive?: boolean;
+    hasActiveSubscription?: boolean;
+    subscriptions?: Array<{
+      id: number;
+      status: string;
+      endDate: string;
+    }>;
+  } | null;
   isActive?: boolean;
   lastLogin?: string;
   createdAt?: string;

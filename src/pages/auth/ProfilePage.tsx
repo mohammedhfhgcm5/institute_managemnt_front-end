@@ -19,6 +19,9 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const changePassword = useChangePassword();
   const { text } = useLocale();
+  const organizationIsActive =
+    user?.organization?.isActive === true &&
+    user.organization.hasActiveSubscription === true;
 
   const {
     register,
@@ -86,8 +89,10 @@ export default function ProfilePage() {
                 <span className="text-muted-foreground text-sm w-32">
                   {text('الحالة:', 'Status:')}
                 </span>
-                <span className={`font-medium ${user?.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                  {user?.isActive ? text('نشط', 'Active') : text('غير نشط', 'Inactive')}
+                <span className={`font-medium ${organizationIsActive ? 'text-green-600' : 'text-red-600'}`}>
+                  {organizationIsActive
+                    ? text('نشط', 'Active')
+                    : text('غير نشط - لا يوجد اشتراك', 'Inactive - no subscription')}
                 </span>
               </div>
             </div>

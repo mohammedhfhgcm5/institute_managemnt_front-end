@@ -234,6 +234,12 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   const userInitials = user?.email?.substring(0, 2).toUpperCase() ?? "US";
   const userName = user?.email?.split("@")[0] ?? "User";
+  const organization = user?.organization;
+  const organizationName = organization
+    ? isArabic
+      ? organization.nameAr || organization.name
+      : organization.nameEn || organization.name
+    : userName;
 
   return (
     <header
@@ -331,14 +337,23 @@ export function Header({ onMenuClick }: HeaderProps) {
               {/* Avatar */}
               <div className="relative">
                 <div
-                  className="h-8 w-8 rounded-xl flex items-center justify-center text-[12px] font-bold text-primary-foreground ring-2 ring-transparent group-hover:ring-primary/25 transition-all duration-200"
+                  className="h-8 w-8 rounded-xl flex items-center justify-center overflow-hidden text-[12px] font-bold text-primary-foreground ring-2 ring-transparent group-hover:ring-primary/25 transition-all duration-200"
                   style={{
-                    background:
-                      "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.7) 100%)",
+                    background: organization?.logo
+                      ? "hsl(var(--card))"
+                      : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.7) 100%)",
                     boxShadow: "0 2px 8px hsl(var(--primary)/.3)",
                   }}
                 >
-                  {userInitials}
+                  {organization?.logo ? (
+                    <img
+                      src={organization.logo}
+                      alt={organizationName}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    userInitials
+                  )}
                 </div>
                 {/* Online indicator */}
                 <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border-2 border-card" />
@@ -352,11 +367,12 @@ export function Header({ onMenuClick }: HeaderProps) {
                 )}
               >
                 <p className="text-[12px] font-semibold text-foreground capitalize">
-                  {userName}
+                  {organizationName}
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-0.5">
                   <Shield className="h-2.5 w-2.5" />
-                  {user?.role ? getStatusLabel(user.role) : "User"}
+                  {organization?.type ||
+                    (user?.role ? getStatusLabel(user.role) : "User")}
                 </p>
               </div>
 
@@ -391,14 +407,23 @@ export function Header({ onMenuClick }: HeaderProps) {
               <div className="relative flex items-center gap-3">
                 <div className="relative flex-shrink-0">
                   <div
-                    className="h-12 w-12 rounded-2xl flex items-center justify-center text-lg font-bold text-primary-foreground"
+                    className="h-12 w-12 rounded-2xl flex items-center justify-center overflow-hidden text-lg font-bold text-primary-foreground"
                     style={{
-                      background:
-                        "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.75) 100%)",
+                      background: organization?.logo
+                        ? "hsl(var(--card))"
+                        : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.75) 100%)",
                       boxShadow: "0 4px 16px hsl(var(--primary)/.35)",
                     }}
                   >
-                    {userInitials}
+                    {organization?.logo ? (
+                      <img
+                        src={organization.logo}
+                        alt={organizationName}
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      userInitials
+                    )}
                   </div>
                   <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-card" />
                 </div>

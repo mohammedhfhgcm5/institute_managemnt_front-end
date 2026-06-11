@@ -1,6 +1,7 @@
 import { useLocale } from "@/hooks/useLocale";
 import { GraduationCap, Shield, Activity } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 function LiveStatus() {
   const [pulse, setPulse] = useState(true);
@@ -24,6 +25,8 @@ function LiveStatus() {
 
 export function Footer() {
   const { text, isArabic } = useLocale();
+  const { user } = useAuth();
+  const organization = user?.organization;
   const year = new Date().getFullYear();
 
   return (
@@ -53,24 +56,34 @@ export function Footer() {
         {/* Left — Brand */}
         <div className="flex items-center gap-2.5">
           <div
-            className="h-6 w-6 rounded-lg flex items-center justify-center flex-shrink-0"
+            className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden"
             style={{
-              background:
-                "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.6) 100%)",
+              background: organization?.logo
+                ? "hsl(var(--card))"
+                : "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)/.6) 100%)",
               boxShadow: "0 2px 8px hsl(var(--primary)/.25)",
             }}
           >
-            <GraduationCap className="h-3.5 w-3.5 text-primary-foreground" />
+            {organization?.logo ? (
+              <img
+                src={organization.logo}
+                alt={organization.name}
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <GraduationCap className="h-3.5 w-3.5 text-primary-foreground" />
+            )}
           </div>
           <div
             className={`flex items-center gap-1.5 ${isArabic ? "flex-row-reverse" : ""}`}
           >
             <span className="text-[11px] font-bold text-foreground/80 tracking-tight">
-              {text("نظام إدارة المدرسة", "School Management System")}
+              {organization?.name ||
+                text("نظام إدارة المدرسة", "School Management System")}
             </span>
             <span className="text-muted-foreground/30 text-[10px]">·</span>
             <span className="text-[11px] text-muted-foreground/50 tabular-nums">
-              v1.0.0
+              {organization?.type || "v1.0.0"}
             </span>
           </div>
         </div>

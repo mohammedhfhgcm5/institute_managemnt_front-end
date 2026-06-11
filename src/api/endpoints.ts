@@ -83,7 +83,7 @@ ASSESSMENTS_BY_STUDENT: (studentId: number) => `/assessments/student/${studentId
   SCHEDULES_BY_TEACHER: (teacherId: number) => `/schedules/teacher/${teacherId}`,
 
   DASHBOARD: {
-    STATS: '/dashboard',
+    STATS: '/dashboard/org',
     ATTENDANCE: '/dashboard/attendance',
     FINANCIAL: '/dashboard/financial',
   },

@@ -1,8 +1,9 @@
 import { lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { PublicRoute } from "./PublicRoute";
+import { PlatformGuard } from "@/components/platform/PlatformGuard";
 
 const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
 const ProfilePage = lazy(() => import("@/pages/auth/ProfilePage"));
@@ -25,6 +26,20 @@ const ExpensesPage = lazy(() => import("@/pages/ExpensesPage"));
 const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const PlatformLayout = lazy(() => import("@/app/platform/layout"));
+const PlatformLoginPage = lazy(() => import("@/app/platform/login/page"));
+const PlatformDashboardPage = lazy(
+  () => import("@/app/platform/dashboard/page"),
+);
+const PlatformOrganizationsPage = lazy(
+  () => import("@/app/platform/organizations/page"),
+);
+const PlatformOrganizationDetailsPage = lazy(
+  () => import("@/app/platform/organizations/[id]/page"),
+);
+const PlatformSubscriptionsPage = lazy(
+  () => import("@/app/platform/subscriptions/page"),
+);
 
 export default function AppRoutes() {
   return (
@@ -37,6 +52,25 @@ export default function AppRoutes() {
           </PublicRoute>
         }
       />
+
+      <Route path="/platform/login" element={<PlatformLoginPage />} />
+      <Route
+        path="/platform"
+        element={
+          <PlatformGuard>
+            <PlatformLayout />
+          </PlatformGuard>
+        }
+      >
+        <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="dashboard" element={<PlatformDashboardPage />} />
+        <Route path="organizations" element={<PlatformOrganizationsPage />} />
+        <Route
+          path="organizations/:id"
+          element={<PlatformOrganizationDetailsPage />}
+        />
+        <Route path="subscriptions" element={<PlatformSubscriptionsPage />} />
+      </Route>
 
       <Route
         element={

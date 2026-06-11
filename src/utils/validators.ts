@@ -105,6 +105,7 @@ export const paymentSchema = z.object({
   studentId: z.number().min(1, 'الطالب مطلوب'),
   academicYear: requiredString('السنة الدراسية'),
   amount: positiveNumber('المبلغ'),
+  currency: z.enum(['SYP', 'USD']).default('SYP'),
   discount: z.number().min(0).optional(),
   status: z
     .enum(['pending', 'paid', 'partial'])

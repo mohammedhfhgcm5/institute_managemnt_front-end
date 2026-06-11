@@ -39,7 +39,7 @@ export default function PaymentsPage() {
     {
       key: 'amount',
       header: text('المبلغ', 'Amount'),
-      render: (p) => formatCurrency(p.amount),
+      render: (p) => formatCurrency(p.amount, p.currency),
     },
     {
       key: 'discount',

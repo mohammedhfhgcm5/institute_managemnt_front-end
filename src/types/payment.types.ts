@@ -5,6 +5,7 @@ export interface Payment {
   studentId: number;
   academicYear: string;
   amount: number;
+  currency: 'SYP' | 'USD';
   discount: number;
   finalAmount?: number;
   status: PaymentStatus;
@@ -20,6 +21,7 @@ export interface CreatePaymentData {
   studentId: number;
   academicYear: string;
   amount: number;
+  currency?: 'SYP' | 'USD';
   discount?: number;
   status?: PaymentStatus;
   dueDate: string;
