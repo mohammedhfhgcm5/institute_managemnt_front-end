@@ -687,7 +687,7 @@ export function ScheduleBuilder({
               <table className="w-full min-w-[900px] border-collapse">
                 <thead>
                   <tr>
-                    <th className="w-32 border border-border bg-muted/40 p-3 text-left text-sm font-semibold text-muted-foreground">
+                    <th className="w-32 border border-border bg-muted/40 p-3 text-start text-sm font-semibold text-muted-foreground">
                       {text("الوقت", "TIME")}
                     </th>
                     {DAYS.map((day) => (

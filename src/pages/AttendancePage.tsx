@@ -375,10 +375,10 @@ export default function AttendancePage() {
                   <table className="w-full min-w-[700px] text-sm">
                     <thead className="bg-muted/40">
                       <tr>
-                        <th className="px-3 py-2 text-left font-medium">{text("Student", "Student")}</th>
-                        <th className="px-3 py-2 text-left font-medium">{text("Status", "Status")}</th>
-                        <th className="px-3 py-2 text-left font-medium">{text("Late Minutes", "Late Minutes")}</th>
-                        <th className="px-3 py-2 text-left font-medium">{text("Notes", "Notes")}</th>
+                        <th className="px-3 py-2 text-start font-medium">{text("Student", "Student")}</th>
+                        <th className="px-3 py-2 text-start font-medium">{text("Status", "Status")}</th>
+                        <th className="px-3 py-2 text-start font-medium">{text("Late Minutes", "Late Minutes")}</th>
+                        <th className="px-3 py-2 text-start font-medium">{text("Notes", "Notes")}</th>
                       </tr>
                     </thead>
                     <tbody>

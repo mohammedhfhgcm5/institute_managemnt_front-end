@@ -484,9 +484,9 @@ export default function AssessmentPage() {
                     <table className="w-full min-w-[760px] text-sm">
                       <thead className="bg-muted/40">
                         <tr>
-                          <th className="px-3 py-2 text-left font-medium">{text("الطالب", "Student")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{text("الدرجة", "Score")}</th>
-                          <th className="px-3 py-2 text-left font-medium">{text("الملاحظات", "Feedback")}</th>
+                          <th className="px-3 py-2 text-start font-medium">{text("الطالب", "Student")}</th>
+                          <th className="px-3 py-2 text-start font-medium">{text("الدرجة", "Score")}</th>
+                          <th className="px-3 py-2 text-start font-medium">{text("الملاحظات", "Feedback")}</th>
                         </tr>
                       </thead>
                       <tbody>

@@ -57,13 +57,13 @@ export function DataTable<T extends { id: number | string }>({
   actions,
   onRowDoubleClick,
 }: DataTableProps<T>) {
-  const { isArabic, text } = useLocale();
+  const { direction, isArabic, text } = useLocale();
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorMessage message={error} onRetry={onRetry} />;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={direction}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {onSearchChange && (
           <SearchInput
@@ -80,12 +80,14 @@ export function DataTable<T extends { id: number | string }>({
         )}
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="overflow-hidden rounded-md border">
+        <Table dir={direction} className="min-w-full">
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={column.key}>{column.header}</TableHead>
+                <TableHead key={column.key} className="whitespace-nowrap">
+                  {column.header}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -107,7 +109,7 @@ export function DataTable<T extends { id: number | string }>({
                   className={onRowDoubleClick ? 'cursor-pointer' : undefined}
                 >
                   {columns.map((column) => (
-                    <TableCell key={column.key}>
+                    <TableCell key={column.key} className="whitespace-nowrap">
                       {column.render
                         ? column.render(item)
                         : String((item as Record<string, unknown>)[column.key] ?? '')}

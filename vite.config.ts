@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
+  envPrefix: 'VITE_',
   plugins: [react()],
   resolve: {
     alias: {
@@ -14,7 +14,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://institute-managemnt.vercel.app',
         changeOrigin: true,
       },
     },
